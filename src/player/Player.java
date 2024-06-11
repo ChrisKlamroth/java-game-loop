@@ -12,8 +12,8 @@ import game.GameKeyListener;
 import game.GameObject;
 
 public class Player extends GameObject {
-  private static final double ACCELERATION = 0.25;
-  private static final double MAX_SPEED = 10;
+  private static final double ACCELERATION = 0.001;
+  private static final double MAX_SPEED = 1;
 
   private final GameKeyListener keyListener;
   private final PlayerKeymap keymap;
