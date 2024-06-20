@@ -1,7 +1,9 @@
 package game;
 
-import javax.swing.JPanel;
+import java.awt.Graphics2D;
 
-public abstract class GameObject extends JPanel {
-  public abstract void update(double deltaTime);
+public interface GameObject {
+  public void update(long deltaTime);
+
+  public void draw(Graphics2D graphics2D);
 }

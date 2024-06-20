@@ -1,4 +1,4 @@
-package player;
+package gameobjects.player;
 
 public class PlayerKeymap {
   private final int up;
