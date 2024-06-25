@@ -8,28 +8,36 @@ import java.awt.Point;
 import game.Game;
 import game.GameObject;
 
-public class Enemy implements GameObject {
+public class Floor implements GameObject {
   private final Dimension size;
-  private final Color color;
   private final Point position;
 
-  public Enemy() {
-    this.size = new Dimension(100, 100);
-    this.color = Color.green;
+  public Floor() {
+    this.size = new Dimension(
+        (int) Game.getWindowBounds().getWidth(),
+        250);
     this.position = new Point(
-        (int) ((Game.WINDOW_SIZE.getWidth() / 2) - (this.size.getWidth() / 2)),
-        (int) ((Game.WINDOW_SIZE.getHeight() / 2) - (this.size.getHeight() / 2)));
+        0,
+        (int) (Game.getWindowBounds().getHeight() - this.size.getHeight()));
+  }
+
+  public Dimension getSize() {
+    return this.size;
+  }
+
+  public Point getPosition() {
+    return this.position;
   }
 
   @Override
   public void update(long deltaTime) {
-    // TODO
+    //
   }
 
   @Override
-  public void draw(Graphics2D graphics2D) {
-    graphics2D.setColor(this.color);
-    graphics2D.fillOval(
+  public void draw(Graphics2D graphics2d) {
+    graphics2d.setColor(Color.lightGray);
+    graphics2d.fillRect(
         (int) this.position.getX(),
         (int) this.position.getY(),
         (int) this.size.getWidth(),

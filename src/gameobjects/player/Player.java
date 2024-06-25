@@ -4,19 +4,32 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.time.Duration;
+
+import javax.imageio.ImageIO;
 
 import game.Game;
 import game.GameKeyListener;
 import game.GameObject;
+import game.Sprite;
 
 public class Player implements GameObject {
-  private static final double ACCELERATION = 0.001;
-  private static final double MAX_SPEED = 1;
+  private static final double ACCELERATION = 0.005;
+  private static final double MAX_SPEED = 0.75;
 
   private final GameKeyListener keyListener;
   private final PlayerKeymap keymap;
   private final Color color;
   private final Direction direction;
+
+  private Sprite sprite;
+  private final Sprite idle;
+  private final Sprite run;
+  private final Sprite attack;
 
   private Dimension size;
   private Point position;
@@ -25,62 +38,95 @@ public class Player implements GameObject {
   public Player(
       GameKeyListener keyListener,
       PlayerKeymap keymap,
-      Point initialPosition,
-      Color color) {
+      Color color) throws IOException {
+    BufferedImage spritesheet = loadSpritesheet();
+
+    this.idle = new Sprite(
+        spritesheet,
+        new Dimension(50, 37),
+        6,
+        0,
+        4,
+        Duration.ofSeconds(1));
+
+    this.run = new Sprite(
+        spritesheet,
+        new Dimension(50, 37),
+        6,
+        8,
+        6,
+        Duration.ofSeconds(1));
+
+    this.attack = new Sprite(
+        spritesheet,
+        new Dimension(50, 37),
+        6,
+        42,
+        4,
+        Duration.ofMillis(350));
+
+    this.sprite = this.idle;
+
     this.keyListener = keyListener;
     this.keymap = keymap;
-
     this.color = color;
-    this.direction = new Direction();
+    this.direction = new Direction(1, 0);
 
-    this.position = initialPosition;
-    this.speed = 0;
     this.size = new Dimension(100, 100);
+    this.position = new Point(
+        0,
+        (int) (Game.getWindowBounds().getHeight() - 250 - this.sprite.getSize().getHeight() + 6));
+    this.speed = 0;
   }
 
   @Override
   public void draw(Graphics2D graphics2D) {
-    graphics2D.setColor(this.color);
-    graphics2D.fillRect(
-        (int) this.position.getX(),
+    // graphics2D.setColor(Color.red);
+    // graphics2D.drawRect(
+    // (int) this.position.getX(),
+    // (int) this.position.getY(),
+    // (int) this.sprite.getSize().getWidth(),
+    // (int) this.sprite.getSize().getHeight());
+
+    graphics2D.drawImage(
+        this.sprite.getFrame(),
+        (int) (this.position.getX() + (this.direction.getX() == -1 ? this.sprite.getSize().getWidth() : 0)),
         (int) this.position.getY(),
-        (int) this.size.getWidth(),
-        (int) this.size.getHeight());
+        (int) (this.sprite.getSize().getWidth() * this.direction.getX()),
+        (int) this.sprite.getSize().getHeight(),
+        null);
   }
 
   @Override
   public void update(long deltaTime) {
+    this.sprite.update(deltaTime);
+
     if (keyListener.isNothingPressed()) {
-      double speed = this.decelerate(deltaTime);
-      double distance = this.calculateDistance(speed, deltaTime);
-      this.position = this.translate(this.direction, distance);
-      this.speed = speed;
-      if (this.speed == 0) {
-        this.direction.reset();
-      }
+      this.sprite = this.idle;
+      this.speed = 0;
       return;
     }
 
     if (keyListener.isKeyPressed(this.keymap.getRight())) {
+      this.sprite = this.run;
       this.direction.setRight();
     } else if (keyListener.isKeyPressed(this.keymap.getLeft())) {
+      this.sprite = this.run;
       this.direction.setLeft();
-    } else {
-      this.direction.resetX();
+    } else if (keyListener.isKeyPressed(this.keymap.getAttack())) {
+      this.sprite = this.attack;
     }
+    // else {
+    // this.direction.resetX();
+    // }
 
-    if (keyListener.isKeyPressed(this.keymap.getDown())) {
-      this.direction.setDown();
-    } else if (keyListener.isKeyPressed(this.keymap.getUp())) {
-      this.direction.setUp();
-    } else {
-      this.direction.resetY();
+    if (keyListener.isKeyPressed(this.keymap.getRight())
+        || keyListener.isKeyPressed(this.keymap.getLeft())) {
+      double speed = this.accelerate(deltaTime);
+      double distance = this.calculateDistance(speed, deltaTime);
+      this.position = this.translate(this.direction, distance);
+      this.speed = speed;
     }
-
-    double speed = this.accelerate(deltaTime);
-    double distance = this.calculateDistance(speed, deltaTime);
-    this.position = this.translate(this.direction, distance);
-    this.speed = speed;
   }
 
   /**
@@ -122,15 +168,24 @@ public class Player implements GameObject {
         (int) (this.position.getX() + direction.getX() * distance),
         (int) (this.position.getY() + direction.getY() * distance));
   }
+
+  private BufferedImage loadSpritesheet() throws IOException {
+    String pathname = "/Users/christophklamroth/Developer/Repositories/java-game-loop/src/assets/player-spritesheet.png";
+    return ImageIO.read(new File(pathname));
+  }
 }
 
 class Direction {
   private int x;
   private int y;
 
+  public Direction(int x, int y) {
+    this.x = x;
+    this.y = y;
+  }
+
   public Direction() {
-    this.x = 0;
-    this.y = 0;
+    this(0, 0);
   }
 
   public int getX() {
