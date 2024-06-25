@@ -18,6 +18,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 import gameobjects.Floor;
+import gameobjects.Manual;
 import gameobjects.player.Player;
 import gameobjects.player.PlayerKeymap;
 
@@ -80,6 +81,7 @@ public class Game extends JFrame implements Runnable {
 
     this.gameObjects = new ArrayList<>();
 
+    Manual manual = new Manual();
     Floor floor = new Floor();
     Player player = new Player(
         this.keyListener,
@@ -88,10 +90,9 @@ public class Game extends JFrame implements Runnable {
             KeyEvent.VK_DOWN,
             KeyEvent.VK_RIGHT,
             KeyEvent.VK_LEFT,
-            KeyEvent.VK_SPACE),
-        Color.blue);
+            KeyEvent.VK_SPACE));
 
-    this.gameObjects.addAll(List.of(floor, player));
+    this.gameObjects.addAll(List.of(manual, floor, player));
 
     this.setLocation(getWindowPosition());
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);

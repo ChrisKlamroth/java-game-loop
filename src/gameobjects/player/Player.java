@@ -1,13 +1,12 @@
 package gameobjects.player;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.time.Duration;
 
 import javax.imageio.ImageIO;
@@ -19,78 +18,95 @@ import game.Sprite;
 
 public class Player implements GameObject {
   private static final double ACCELERATION = 0.005;
-  private static final double MAX_SPEED = 0.75;
+  private static final double MAX_SPEED = 0.7;
+
+  private static final Dimension SPRITE_FRAME_SIZE = new Dimension(50, 37);
+  private static final int SPRITE_SCALE = 6;
 
   private final GameKeyListener keyListener;
   private final PlayerKeymap keymap;
-  private final Color color;
   private final Direction direction;
 
-  private Sprite sprite;
-  private final Sprite idle;
-  private final Sprite run;
-  private final Sprite attack;
+  private final Sprite idleSprite;
+  private final Sprite runSprite;
+  private final Sprite crouchSprite;
+  private final Sprite attackSprite;
+  private final Sprite airAttackSprite;
 
-  private Dimension size;
+  private Sprite sprite;
+  private boolean isSpriteLocked;
+  private long activeSpriteTimer;
+
   private Point position;
   private double speed;
 
-  public Player(
-      GameKeyListener keyListener,
-      PlayerKeymap keymap,
-      Color color) throws IOException {
+  public Player(GameKeyListener keyListener, PlayerKeymap keymap) throws IOException {
     BufferedImage spritesheet = loadSpritesheet();
 
-    this.idle = new Sprite(
+    this.idleSprite = new Sprite(
         spritesheet,
-        new Dimension(50, 37),
-        6,
+        SPRITE_FRAME_SIZE,
+        SPRITE_SCALE,
         0,
         4,
         Duration.ofSeconds(1));
-
-    this.run = new Sprite(
+    this.runSprite = new Sprite(
         spritesheet,
-        new Dimension(50, 37),
-        6,
+        SPRITE_FRAME_SIZE,
+        SPRITE_SCALE,
         8,
         6,
         Duration.ofSeconds(1));
-
-    this.attack = new Sprite(
+    this.crouchSprite = new Sprite(
         spritesheet,
-        new Dimension(50, 37),
-        6,
+        SPRITE_FRAME_SIZE,
+        SPRITE_SCALE,
+        4,
+        4,
+        Duration.ofSeconds(1));
+    this.attackSprite = new Sprite(
+        spritesheet,
+        SPRITE_FRAME_SIZE,
+        SPRITE_SCALE,
         42,
         4,
         Duration.ofMillis(350));
+    this.airAttackSprite = new Sprite(
+        spritesheet,
+        SPRITE_FRAME_SIZE,
+        SPRITE_SCALE,
+        97,
+        4,
+        Duration.ofMillis(450));
 
-    this.sprite = this.idle;
+    this.sprite = this.idleSprite;
+    this.isSpriteLocked = false;
+    this.activeSpriteTimer = 0;
 
     this.keyListener = keyListener;
     this.keymap = keymap;
-    this.color = color;
-    this.direction = new Direction(1, 0);
+    this.direction = Direction.right();
 
-    this.size = new Dimension(100, 100);
+    int floorHeight = 250;
+    int spriteHeightOffset = 6;
     this.position = new Point(
         0,
-        (int) (Game.getWindowBounds().getHeight() - 250 - this.sprite.getSize().getHeight() + 6));
+        (int) (Game.getWindowBounds().getHeight()
+            - floorHeight
+            - this.sprite.getSize().getHeight()
+            + spriteHeightOffset));
     this.speed = 0;
   }
 
   @Override
   public void draw(Graphics2D graphics2D) {
-    // graphics2D.setColor(Color.red);
-    // graphics2D.drawRect(
-    // (int) this.position.getX(),
-    // (int) this.position.getY(),
-    // (int) this.sprite.getSize().getWidth(),
-    // (int) this.sprite.getSize().getHeight());
-
+    // Flip the image by negative scaling it with
+    // graphics2D.drawImage(image, x + width, y, -width, height, null)
+    // Since the negative scale will move the image to left, its horizontal position
+    // has to be compensated.
     graphics2D.drawImage(
         this.sprite.getFrame(),
-        (int) (this.position.getX() + (this.direction.getX() == -1 ? this.sprite.getSize().getWidth() : 0)),
+        (int) (this.position.getX() + (this.direction.isLeft() ? this.sprite.getSize().getWidth() : 0)),
         (int) this.position.getY(),
         (int) (this.sprite.getSize().getWidth() * this.direction.getX()),
         (int) this.sprite.getSize().getHeight(),
@@ -101,32 +117,68 @@ public class Player implements GameObject {
   public void update(long deltaTime) {
     this.sprite.update(deltaTime);
 
-    if (keyListener.isNothingPressed()) {
-      this.sprite = this.idle;
-      this.speed = 0;
-      return;
+    // Warp to the other side of the window when player goes out of bounds.
+    if (this.position.getX() > Game.getWindowBounds().getSize().getWidth() - 95) {
+      this.position = new Point(
+          (int) -this.sprite.getSize().getWidth() + 95,
+          (int) this.position.getY());
+    } else if (this.position.getX() < -this.sprite.getSize().getWidth() + 95) {
+      this.position = new Point(
+          (int) Game.getWindowBounds().getSize().getWidth() - 95,
+          (int) this.position.getY());
     }
 
-    if (keyListener.isKeyPressed(this.keymap.getRight())) {
-      this.sprite = this.run;
-      this.direction.setRight();
-    } else if (keyListener.isKeyPressed(this.keymap.getLeft())) {
-      this.sprite = this.run;
-      this.direction.setLeft();
+    // TODO: find a better way to lock other sprite animations when a blockable
+    // sprite (ex. attacking) is running.
+
+    if (keyListener.isKeyPressed(this.keymap.getAttack())
+        && keyListener.isKeyPressed(this.keymap.getDown())) {
+      if (!this.isSpriteLocked) {
+        this.sprite = this.airAttackSprite;
+        this.isSpriteLocked = true;
+      }
     } else if (keyListener.isKeyPressed(this.keymap.getAttack())) {
-      this.sprite = this.attack;
+      if (!this.isSpriteLocked) {
+        this.sprite = this.attackSprite;
+        this.isSpriteLocked = true;
+      }
+    } else if (keyListener.isKeyPressed(this.keymap.getDown())) {
+      if (!this.isSpriteLocked) {
+        this.sprite = this.crouchSprite;
+      }
+    } else if (keyListener.isKeyPressed(this.keymap.getRight())) {
+      if (!this.isSpriteLocked) {
+        this.direction.setRight();
+        this.sprite = this.runSprite;
+        this.move(deltaTime);
+      }
+    } else if (keyListener.isKeyPressed(this.keymap.getLeft())) {
+      if (!this.isSpriteLocked) {
+        this.direction.setLeft();
+        this.sprite = this.runSprite;
+        this.move(deltaTime);
+      }
+    } else {
+      if (!this.isSpriteLocked) {
+        this.sprite = this.idleSprite;
+        this.speed = 0;
+      }
     }
-    // else {
-    // this.direction.resetX();
-    // }
 
-    if (keyListener.isKeyPressed(this.keymap.getRight())
-        || keyListener.isKeyPressed(this.keymap.getLeft())) {
-      double speed = this.accelerate(deltaTime);
-      double distance = this.calculateDistance(speed, deltaTime);
-      this.position = this.translate(this.direction, distance);
-      this.speed = speed;
+    if (this.isSpriteLocked && this.activeSpriteTimer >= this.sprite.getDuration().toMillis()) {
+      this.activeSpriteTimer = 0;
+      this.isSpriteLocked = false;
     }
+    if (this.isSpriteLocked) {
+      this.activeSpriteTimer += deltaTime;
+    }
+  }
+
+  private void move(long deltaTime) {
+    double speed = this.accelerate(deltaTime);
+    double distance = this.calculateDistance(speed, deltaTime);
+    this.position = this.translate(this.direction, distance);
+    this.speed = speed;
   }
 
   /**
@@ -170,14 +222,19 @@ public class Player implements GameObject {
   }
 
   private BufferedImage loadSpritesheet() throws IOException {
-    String pathname = "/Users/christophklamroth/Developer/Repositories/java-game-loop/src/assets/player-spritesheet.png";
-    return ImageIO.read(new File(pathname));
+    String imagePathname = String.format("%1$sresources%1$splayer-spritesheet.png", File.separator);
+    URL imageUrl = getClass().getResource(imagePathname);
+    return ImageIO.read(imageUrl);
   }
 }
 
 class Direction {
   private int x;
   private int y;
+
+  public static Direction right() {
+    return new Direction(1, 0);
+  }
 
   public Direction(int x, int y) {
     this.x = x;
@@ -223,5 +280,9 @@ class Direction {
 
   public void resetY() {
     this.y = 0;
+  }
+
+  public boolean isLeft() {
+    return this.x == -1;
   }
 }

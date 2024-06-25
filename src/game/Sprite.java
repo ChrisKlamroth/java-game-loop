@@ -9,9 +9,10 @@ public class Sprite {
   private final BufferedImage spritesheet;
   private final Dimension frameSize;
   private final double scale;
-  private final int firstFrameIndex;
-  private final int animationFrameCount;
+  private final int firstFrame;
+  private final int totalFrames;
   private final double timePerFrame;
+  private final Duration duration;
 
   private long timeElapsed;
   private int frameIndex;
@@ -21,16 +22,17 @@ public class Sprite {
       BufferedImage spritesheet,
       Dimension frameSize,
       double scale,
-      int firstFrameIndex,
-      int animationFrameCount,
-      Duration animationDuration) throws IOException {
+      int firstFrame,
+      int totalFrames,
+      Duration duration) throws IOException {
     this.spritesheet = spritesheet;
     this.frameSize = frameSize;
     this.scale = scale;
 
-    this.firstFrameIndex = firstFrameIndex;
-    this.animationFrameCount = animationFrameCount;
-    this.timePerFrame = animationDuration.toMillis() / this.animationFrameCount;
+    this.firstFrame = firstFrame;
+    this.totalFrames = totalFrames;
+    this.duration = duration;
+    this.timePerFrame = this.duration.toMillis() / this.totalFrames;
 
     this.timeElapsed = 0;
     this.frameIndex = 0;
@@ -54,17 +56,21 @@ public class Sprite {
   public void update(long deltaTime) {
     this.offset = this.calculateOffset();
     if (this.timeElapsed >= this.timePerFrame) {
-      this.frameIndex = ++this.frameIndex % this.animationFrameCount;
+      this.frameIndex = ++this.frameIndex % this.totalFrames;
       this.timeElapsed -= this.timePerFrame;
     }
     this.timeElapsed += deltaTime;
   }
 
+  public Duration getDuration() {
+    return this.duration;
+  }
+
   private Offset calculateOffset() {
     return new Offset(
-        this.frameSize.getWidth() * ((this.firstFrameIndex + this.frameIndex) % this.getSpritesheetColumns()),
+        this.frameSize.getWidth() * ((this.firstFrame + this.frameIndex) % this.getSpritesheetColumns()),
         this.frameSize.getHeight()
-            * Math.floor((this.firstFrameIndex + this.frameIndex) / this.getSpritesheetColumns()));
+            * Math.floor((this.firstFrame + this.frameIndex) / this.getSpritesheetColumns()));
   }
 
   private int getSpritesheetColumns() {
