@@ -105,7 +105,7 @@ public class Player implements GameObject {
     // graphics2D.drawImage(image, x + width, y, -width, height, null)
     // Since the negative scale will move the image to left, its horizontal position
     // has to be compensated.
-    graphics2D.setColor(Color.blue);
+    graphics2D.setColor(Color.black);
     graphics2D.drawRect(
         (int) this.position.getX(),
         (int) this.position.getY(),
