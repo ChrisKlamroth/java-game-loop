@@ -15,9 +15,10 @@ import javax.imageio.ImageIO;
 import game.Game;
 import game.GameKeyListener;
 import game.GameObject;
+import game.LocatedRectangle;
 import game.Sprite;
 
-public class Player implements GameObject {
+public class Player implements GameObject, LocatedRectangle {
   private static final double ACCELERATION = 0.005;
   private static final double MAX_SPEED = 0.7;
 
@@ -105,12 +106,19 @@ public class Player implements GameObject {
     // graphics2D.drawImage(image, x + width, y, -width, height, null)
     // Since the negative scale will move the image to left, its horizontal position
     // has to be compensated.
-    graphics2D.setColor(Color.black);
+    graphics2D.setColor(Color.green);
     graphics2D.drawRect(
         (int) this.position.getX(),
         (int) this.position.getY(),
         (int) this.sprite.getSize().getWidth(),
         (int) this.sprite.getSize().getHeight());
+    
+    graphics2D.setColor(Color.red);
+    graphics2D.drawRect(
+    		getAddress().x,
+    		getAddress().y,
+    		getDimension().width,
+    		getDimension().height);
 
     graphics2D.drawImage(
         this.sprite.getFrame(),
@@ -181,6 +189,54 @@ public class Player implements GameObject {
       this.activeSpriteTimer += deltaTime;
     }
   }
+  
+  @Override
+  public Point getAddress() {
+  	// TODO Auto-generated method stub
+  	return new Point(position.x+96, position.y+35);
+  }
+
+  @Override
+  public Point getDirection() {
+  	// TODO Auto-generated method stub
+  	return null;
+  }
+
+  @Override
+  public double getSpeed() {
+  	// TODO Auto-generated method stub
+  	return speed;
+  }
+
+  @Override
+  public Dimension getDimension() {
+  	// TODO Auto-generated method stub
+  	return new Dimension(this.sprite.getSize().width -96*2,this.sprite.getSize().height-35);
+  }
+
+  @Override
+  public void setAddress(Point location) {
+  	// TODO Auto-generated method stub
+  	this.position=location;
+  }
+
+  @Override
+  public void setDirection(Point direction) {
+  	// TODO Auto-generated method stub
+  	
+  }
+
+  @Override
+  public void setSpeed(double speed) {
+  	// TODO Auto-generated method stub
+  	this.speed=speed;
+  }
+
+  @Override
+  public void setDimension(Dimension dimension) {
+  	// TODO Auto-generated method stub
+  	
+  }
 
   private void move(long deltaTime) {
     double speed = this.accelerate(deltaTime);
@@ -230,10 +286,14 @@ public class Player implements GameObject {
   }
 
   private BufferedImage loadSpritesheet() throws IOException {
-    String imagePathname = String.format("%1$sresources%1$splayer-spritesheet.png", File.separator);
-    URL imageUrl = getClass().getResource(imagePathname);
-    return ImageIO.read(imageUrl);
+//    String imagePathname = String.format("%1$sresources%1$splayer-spritesheet.png", File.separator);
+//    URL imageUrl = getClass().getResource(imagePathname);
+//    return ImageIO.read(imageUrl);
+    File file=new File(".//resources//player-spritesheet.png");
+    return ImageIO.read(file);
   }
+  
+  
 }
 
 class Direction {
