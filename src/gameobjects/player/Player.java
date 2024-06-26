@@ -1,5 +1,6 @@
 package gameobjects.player;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -104,6 +105,13 @@ public class Player implements GameObject {
     // graphics2D.drawImage(image, x + width, y, -width, height, null)
     // Since the negative scale will move the image to left, its horizontal position
     // has to be compensated.
+    graphics2D.setColor(Color.red);
+    graphics2D.drawRect(
+        (int) this.position.getX(),
+        (int) this.position.getY(),
+        (int) this.sprite.getSize().getWidth(),
+        (int) this.sprite.getSize().getHeight());
+
     graphics2D.drawImage(
         this.sprite.getFrame(),
         (int) (this.position.getX() + (this.direction.isLeft() ? this.sprite.getSize().getWidth() : 0)),
