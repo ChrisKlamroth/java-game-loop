@@ -16,8 +16,9 @@ import game.Game;
 import game.GameKeyListener;
 import game.GameObject;
 import game.LocatedRectangle;
-import game.ResourceLoader;
+import game.ResourceManager;
 import game.Sprite;
+import game.Spritesheet;
 
 public class Player implements GameObject, LocatedRectangle {
   private static final double ACCELERATION = 0.005;
@@ -45,7 +46,7 @@ public class Player implements GameObject, LocatedRectangle {
   private double speed;
 
   public Player(GameKeyListener keyListener, PlayerKeymap keymap) throws IOException {
-    BufferedImage spritesheet = ResourceLoader.loadPlayerSpritesheet();
+    BufferedImage spritesheet = ResourceManager.loadPlayerSpritesheet();
 
     this.idleSprite = new Sprite(
         spritesheet,
@@ -114,13 +115,13 @@ public class Player implements GameObject, LocatedRectangle {
         (int) this.position.getY(),
         (int) this.sprite.getSize().getWidth(),
         (int) this.sprite.getSize().getHeight());
-    
+
     graphics2D.setColor(Color.red);
     graphics2D.drawRect(
-    		getAddress().x,
-    		getAddress().y,
-    		getDimension().width,
-    		getDimension().height);
+        getAddress().x,
+        getAddress().y,
+        getDimension().width,
+        getDimension().height);
 
     graphics2D.drawImage(
         this.sprite.getFrame(),
@@ -130,28 +131,28 @@ public class Player implements GameObject, LocatedRectangle {
         (int) this.sprite.getSize().getHeight(),
         null);
   }
-  
+
   public boolean vacantSpace(LocatedRectangle gameObject) {
-		boolean anyIntersection = false ;
-		anyIntersection = anyIntersection || this.intersects (gameObject);
-		return !anyIntersection;
-	}
-  
+    boolean anyIntersection = false;
+    anyIntersection = anyIntersection || this.intersects(gameObject);
+    return !anyIntersection;
+  }
+
   public void collisionDirection(LocatedRectangle gameObject) {
-	  while(!this.vacantSpace(gameObject)) {
-		  if(this.rightOf(gameObject, -30)) {
-			  this.position.x+=1;
-		  }
-		  if(this.leftOf(gameObject, -30)) {
-			  this.position.x-=1;
-		  }
-		  if(this.above(gameObject, -30)) {
-			  this.position.y-=1;
-		  }
-		  if(this.below(gameObject, -30)) {
-			  this.position.y+=1;
-		  }
-	  }
+    while (!this.vacantSpace(gameObject)) {
+      if (this.rightOf(gameObject, -30)) {
+        this.position.x += 1;
+      }
+      if (this.leftOf(gameObject, -30)) {
+        this.position.x -= 1;
+      }
+      if (this.above(gameObject, -30)) {
+        this.position.y -= 1;
+      }
+      if (this.below(gameObject, -30)) {
+        this.position.y += 1;
+      }
+    }
   }
 
   @Override
@@ -205,10 +206,10 @@ public class Player implements GameObject, LocatedRectangle {
         this.speed = 0;
       }
     }
-    
+
     if (keyListener.isKeyPressed(this.keymap.getPseudoJump())) {
-        this.position.y-=50;
-        }
+      this.position.y -= 50;
+    }
 
     if (this.isSpriteLocked && this.activeSpriteTimer >= this.sprite.getDuration().toMillis()) {
       this.activeSpriteTimer = 0;
@@ -217,56 +218,56 @@ public class Player implements GameObject, LocatedRectangle {
     if (this.isSpriteLocked) {
       this.activeSpriteTimer += deltaTime;
     }
-    
-    this.position.y+=GRAVITY;
+
+    this.position.y += GRAVITY;
   }
-  
+
   @Override
   public Point getAddress() {
-  	// TODO Auto-generated method stub
-  	return new Point(position.x+96, position.y+35);
+    // TODO Auto-generated method stub
+    return new Point(position.x + 96, position.y + 35);
   }
 
   @Override
   public Point getDirection() {
-  	// TODO Auto-generated method stub
-  	return null;
+    // TODO Auto-generated method stub
+    return null;
   }
 
   @Override
   public double getSpeed() {
-  	// TODO Auto-generated method stub
-  	return speed;
+    // TODO Auto-generated method stub
+    return speed;
   }
 
   @Override
   public Dimension getDimension() {
-  	// TODO Auto-generated method stub
-  	return new Dimension(this.sprite.getSize().width -96*2,this.sprite.getSize().height-41);
+    // TODO Auto-generated method stub
+    return new Dimension(this.sprite.getSize().width - 96 * 2, this.sprite.getSize().height - 41);
   }
 
   @Override
   public void setAddress(Point location) {
-  	// TODO Auto-generated method stub
-  	this.position=location;
+    // TODO Auto-generated method stub
+    this.position = location;
   }
 
   @Override
   public void setDirection(Point direction) {
-  	// TODO Auto-generated method stub
-  	
+    // TODO Auto-generated method stub
+
   }
 
   @Override
   public void setSpeed(double speed) {
-  	// TODO Auto-generated method stub
-  	this.speed=speed;
+    // TODO Auto-generated method stub
+    this.speed = speed;
   }
 
   @Override
   public void setDimension(Dimension dimension) {
-  	// TODO Auto-generated method stub
-  	
+    // TODO Auto-generated method stub
+
   }
 
   private void move(long deltaTime) {
@@ -317,14 +318,14 @@ public class Player implements GameObject, LocatedRectangle {
   }
 
   private BufferedImage loadSpritesheet() throws IOException {
-//    String imagePathname = String.format("%1$sresources%1$splayer-spritesheet.png", File.separator);
-//    URL imageUrl = getClass().getResource(imagePathname);
-//    return ImageIO.read(imageUrl);
-    File file=new File(".//resources//player-spritesheet.png");
+    // String imagePathname =
+    // String.format("%1$sresources%1$splayer-spritesheet.png", File.separator);
+    // URL imageUrl = getClass().getResource(imagePathname);
+    // return ImageIO.read(imageUrl);
+    File file = new File(".//resources//player-spritesheet.png");
     return ImageIO.read(file);
   }
-  
-  
+
 }
 
 class Direction {
