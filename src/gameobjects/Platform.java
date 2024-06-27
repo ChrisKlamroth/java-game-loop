@@ -9,11 +9,11 @@ import game.Game;
 import game.GameObject;
 import game.LocatedRectangle;
 
-public class TestObject implements GameObject, LocatedRectangle {
+public class Platform implements GameObject, LocatedRectangle {
 	  private Dimension size;
 	  private Point position;
 
-	  public TestObject(Dimension size, Point position) {
+	  public Platform(Point position, Dimension size) {
 	    this.size = size;
 	    this.position=position;
 	  }
@@ -33,7 +33,7 @@ public class TestObject implements GameObject, LocatedRectangle {
 
 	  @Override
 	  public void draw(Graphics2D graphics2d) {
-	    graphics2d.setColor(Color.red);
+	    graphics2d.setColor(Color.black);
 	    graphics2d.fillRect(
 	        (int) this.position.getX(),
 	        (int) this.position.getY(),

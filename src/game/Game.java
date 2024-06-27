@@ -20,6 +20,7 @@ import javax.swing.JFrame;
 
 import gameobjects.Floor;
 import gameobjects.Manual;
+import gameobjects.Platform;
 import gameobjects.TestObject;
 import gameobjects.player.Player;
 import gameobjects.player.PlayerKeymap;
@@ -87,7 +88,28 @@ public class Game extends JFrame implements Runnable {
 
     Manual manual = new Manual();
     Floor floor = new Floor();
-    TestObject testObject= new TestObject(new Dimension(100, 100), new Point(300, 500));
+    Platform platform1 = new Platform(
+    		new Point(
+    		 (int) Game.getWindowBounds().getWidth()/2-(int) Game.getWindowBounds().getWidth()/12,
+    		 (int) Game.getWindowBounds().getHeight()/2),
+    		new Dimension(
+    		 (int) Game.getWindowBounds().getWidth()/6,
+    		(int) Game.getWindowBounds().getHeight()/20));
+    Platform platform2 = new Platform(
+    		new Point(
+    		 100,
+			 (int) Game.getWindowBounds().getHeight()/4),
+			new Dimension(
+			 (int) Game.getWindowBounds().getWidth()/6,
+			 (int) Game.getWindowBounds().getHeight()/20));
+    Platform platform3 = new Platform(
+    		new Point(
+    		 (int) Game.getWindowBounds().getWidth()-(int) Game.getWindowBounds().getWidth()/6-100,
+			 (int) Game.getWindowBounds().getHeight()/4),
+			new Dimension(
+			 (int) Game.getWindowBounds().getWidth()/6,
+			 (int) Game.getWindowBounds().getHeight()/20));
+    TestObject testObject= new TestObject(new Dimension(100, 100), new Point(700, 200));
     Player player = new Player(
         this.keyListener,
         new PlayerKeymap(
@@ -95,11 +117,11 @@ public class Game extends JFrame implements Runnable {
             KeyEvent.VK_DOWN,
             KeyEvent.VK_RIGHT,
             KeyEvent.VK_LEFT,
-            KeyEvent.VK_SPACE,
-            KeyEvent.VK_SHIFT));
+            KeyEvent.VK_C,
+            KeyEvent.VK_SPACE));
 
-    this.gameObjects.addAll(List.of(manual, floor, player, testObject));
-    this.objectsWithHitbox.addAll(List.of(player, testObject, floor));
+    this.gameObjects.addAll(List.of(manual, floor, player, testObject, platform1,platform2,platform3));
+    this.objectsWithHitbox.addAll(List.of(player, testObject, floor, platform1,platform2,platform3));
 
     this.setLocation(getWindowPosition());
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -117,19 +139,17 @@ public class Game extends JFrame implements Runnable {
   private void update(long deltaTime) {
     this.gameObjects.forEach(gameObject -> gameObject.update(deltaTime));
     
-    if(!objectsWithHitbox.get(1).vacantSpace(objectsWithHitbox.get(0))) {
-    	objectsWithHitbox.get(1).collisionDirection(objectsWithHitbox.get(0));
+    for(LocatedRectangle part: objectsWithHitbox) {
+    	if(!objectsWithHitbox.get(1).vacantSpace(part)&&!(objectsWithHitbox.get(1)==part)) {
+        	objectsWithHitbox.get(1).collisionDirection(part);
+    	}
     }
-    if(!objectsWithHitbox.get(1).vacantSpace(objectsWithHitbox.get(2))) {
-		objectsWithHitbox.get(1).collisionDirection(objectsWithHitbox.get(2));
-	}
     
-	if(!objectsWithHitbox.get(0).vacantSpace(objectsWithHitbox.get(1))) {
-		objectsWithHitbox.get(0).collisionDirection(objectsWithHitbox.get(1));
-	}
-	if(!objectsWithHitbox.get(0).vacantSpace(objectsWithHitbox.get(2))) {
-		objectsWithHitbox.get(0).collisionDirection(objectsWithHitbox.get(2));
-	}
+    for(LocatedRectangle part: objectsWithHitbox) {
+    	if(!objectsWithHitbox.get(0).vacantSpace(part)&&!(objectsWithHitbox.get(0)==part)) {
+        	objectsWithHitbox.get(0).collisionDirection(part);
+    	}
+    }
   }
 
   private void draw(Graphics2D graphics2D) {

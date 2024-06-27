@@ -13,7 +13,7 @@ public class Manual implements GameObject {
   private final Point position;
 
   public Manual() {
-    this.size = new Dimension(279, 158);
+    this.size = new Dimension(279, 178);
     this.position = new Point(20, 20);
   }
 
@@ -32,9 +32,10 @@ public class Manual implements GameObject {
     graphics2d.drawString("Move right: [Right Arrow]", 28, 67);
     graphics2d.drawString("Move left: [Left Arrow]", 28, 87);
     graphics2d.drawString("Crouch: [Down Arrow]", 28, 107);
-    graphics2d.drawString("Attack: [Space]", 28, 127);
+    graphics2d.drawString("Attack: [C]", 28, 127);
     graphics2d.drawString("Air Attack: [Down Arrow] + [Space]", 28, 147);
-    graphics2d.drawString("Jump: [Shift]", 28, 167);
+    graphics2d.drawString("Jump: [Space]", 28, 167);
+    graphics2d.drawString("Levitate: [Down Arrow]", 28, 187);
 
     graphics2d.drawRect(
         (int) this.position.getX(),
