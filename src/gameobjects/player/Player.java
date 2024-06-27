@@ -16,6 +16,7 @@ import game.Game;
 import game.GameKeyListener;
 import game.GameObject;
 import game.LocatedRectangle;
+import game.ResourceLoader;
 import game.Sprite;
 
 public class Player implements GameObject, LocatedRectangle {
@@ -44,7 +45,7 @@ public class Player implements GameObject, LocatedRectangle {
   private double speed;
 
   public Player(GameKeyListener keyListener, PlayerKeymap keymap) throws IOException {
-    BufferedImage spritesheet = loadSpritesheet();
+    BufferedImage spritesheet = ResourceLoader.loadPlayerSpritesheet();
 
     this.idleSprite = new Sprite(
         spritesheet,
