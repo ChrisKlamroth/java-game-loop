@@ -95,10 +95,11 @@ public class Game extends JFrame implements Runnable {
             KeyEvent.VK_DOWN,
             KeyEvent.VK_RIGHT,
             KeyEvent.VK_LEFT,
-            KeyEvent.VK_SPACE));
+            KeyEvent.VK_SPACE,
+            KeyEvent.VK_SHIFT));
 
     this.gameObjects.addAll(List.of(manual, floor, player, testObject));
-    this.objectsWithHitbox.addAll(List.of(player, testObject));
+    this.objectsWithHitbox.addAll(List.of(player, testObject, floor));
 
     this.setLocation(getWindowPosition());
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -115,14 +116,20 @@ public class Game extends JFrame implements Runnable {
 
   private void update(long deltaTime) {
     this.gameObjects.forEach(gameObject -> gameObject.update(deltaTime));
- 
+    
     if(!objectsWithHitbox.get(1).vacantSpace(objectsWithHitbox.get(0))) {
     	objectsWithHitbox.get(1).collisionDirection(objectsWithHitbox.get(0));
     }
+    if(!objectsWithHitbox.get(1).vacantSpace(objectsWithHitbox.get(2))) {
+		objectsWithHitbox.get(1).collisionDirection(objectsWithHitbox.get(2));
+	}
+    
 	if(!objectsWithHitbox.get(0).vacantSpace(objectsWithHitbox.get(1))) {
 		objectsWithHitbox.get(0).collisionDirection(objectsWithHitbox.get(1));
 	}
-    
+	if(!objectsWithHitbox.get(0).vacantSpace(objectsWithHitbox.get(2))) {
+		objectsWithHitbox.get(0).collisionDirection(objectsWithHitbox.get(2));
+	}
   }
 
   private void draw(Graphics2D graphics2D) {

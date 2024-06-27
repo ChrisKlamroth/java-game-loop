@@ -96,17 +96,19 @@ public class TestObject implements GameObject, LocatedRectangle {
 	}
   
   public void collisionDirection(LocatedRectangle gameObject) {
-	  while(!this.vacantSpace(gameObject)&&!(this.position.x+this.size.width>(int) Game.getWindowBounds().getWidth())) {
+	  while(!this.vacantSpace(gameObject)&&
+			(!(this.position.x+this.size.width>(int) Game.getWindowBounds().getWidth()||
+			 !(this.position.x>0)))) {
 		  if(this.rightOf(gameObject, -30)) {
 			  this.position.x+=1;
 		  }
 		  if(this.leftOf(gameObject, -30)) {
 			  this.position.x-=1;
 		  }
-		  if(this.above(gameObject, 0)) {
+		  if(this.above(gameObject, -30)) {
 			  this.position.y-=1;
 		  }
-		  if(this.below(gameObject, 0)) {
+		  if(this.below(gameObject, -30)) {
 			  this.position.y+=1;
 		  }
 	  }

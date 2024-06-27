@@ -7,8 +7,9 @@ import java.awt.Point;
 
 import game.Game;
 import game.GameObject;
+import game.LocatedRectangle;
 
-public class Floor implements GameObject {
+public class Floor implements GameObject, LocatedRectangle {
   private final Dimension size;
   private final Point position;
 
@@ -43,4 +44,63 @@ public class Floor implements GameObject {
         (int) this.size.getWidth(),
         (int) this.size.getHeight());
   }
+
+@Override
+public Point getAddress() {
+	// TODO Auto-generated method stub
+	return position;
+}
+
+@Override
+public Point getDirection() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public double getSpeed() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+
+@Override
+public Dimension getDimension() {
+	// TODO Auto-generated method stub
+	return size;
+}
+
+@Override
+public void setAddress(Point location) {
+	// TODO Auto-generated method stub
+}
+
+@Override
+public void setDirection(Point direction) {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public void setSpeed(double speed) {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public void setDimension(Dimension dimension) {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public boolean vacantSpace(LocatedRectangle locatedRectangle) {
+	// TODO Auto-generated method stub
+	return false;
+}
+
+@Override
+public void collisionDirection(LocatedRectangle locatedRectangle) {
+	// TODO Auto-generated method stub
+	
+}
 }

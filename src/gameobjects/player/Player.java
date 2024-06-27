@@ -21,6 +21,7 @@ import game.Sprite;
 public class Player implements GameObject, LocatedRectangle {
   private static final double ACCELERATION = 0.005;
   private static final double MAX_SPEED = 0.7;
+  private static final double GRAVITY = 9.81;
 
   private static final Dimension SPRITE_FRAME_SIZE = new Dimension(50, 37);
   private static final int SPRITE_SCALE = 6;
@@ -136,21 +137,17 @@ public class Player implements GameObject, LocatedRectangle {
 	}
   
   public void collisionDirection(LocatedRectangle gameObject) {
-	  //System.out.println("collision");
 	  while(!this.vacantSpace(gameObject)) {
-		  //System.out.println("collision");
 		  if(this.rightOf(gameObject, -30)) {
 			  this.position.x+=1;
-			  System.out.println("1");
 		  }
 		  if(this.leftOf(gameObject, -30)) {
 			  this.position.x-=1;
-			  System.out.println("2");
 		  }
-		  if(this.above(gameObject, 0)) {
+		  if(this.above(gameObject, -30)) {
 			  this.position.y-=1;
 		  }
-		  if(this.below(gameObject, 0)) {
+		  if(this.below(gameObject, -30)) {
 			  this.position.y+=1;
 		  }
 	  }
@@ -207,6 +204,10 @@ public class Player implements GameObject, LocatedRectangle {
         this.speed = 0;
       }
     }
+    
+    if (keyListener.isKeyPressed(this.keymap.getPseudoJump())) {
+        this.position.y-=50;
+        }
 
     if (this.isSpriteLocked && this.activeSpriteTimer >= this.sprite.getDuration().toMillis()) {
       this.activeSpriteTimer = 0;
@@ -215,8 +216,9 @@ public class Player implements GameObject, LocatedRectangle {
     if (this.isSpriteLocked) {
       this.activeSpriteTimer += deltaTime;
     }
+    
+    this.position.y+=GRAVITY;
   }
-  
   
   @Override
   public Point getAddress() {
@@ -239,7 +241,7 @@ public class Player implements GameObject, LocatedRectangle {
   @Override
   public Dimension getDimension() {
   	// TODO Auto-generated method stub
-  	return new Dimension(this.sprite.getSize().width -96*2,this.sprite.getSize().height-35);
+  	return new Dimension(this.sprite.getSize().width -96*2,this.sprite.getSize().height-41);
   }
 
   @Override
