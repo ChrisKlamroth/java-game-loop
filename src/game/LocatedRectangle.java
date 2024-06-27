@@ -13,6 +13,9 @@ public interface LocatedRectangle {
 	public void setDirection(Point direction);
 	public void setSpeed(double speed);
 	public void setDimension(Dimension dimension);
+	
+	public boolean vacantSpace(LocatedRectangle locatedRectangle);
+	public void collisionDirection(LocatedRectangle locatedRectangle);
 
 	public default boolean intersects(LocatedRectangle other) {
 		return !doesNotIntersect(other, 0);

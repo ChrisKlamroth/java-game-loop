@@ -128,6 +128,33 @@ public class Player implements GameObject, LocatedRectangle {
         (int) this.sprite.getSize().getHeight(),
         null);
   }
+  
+  public boolean vacantSpace(LocatedRectangle gameObject) {
+		boolean anyIntersection = false ;
+		anyIntersection = anyIntersection || this.intersects (gameObject);
+		return !anyIntersection;
+	}
+  
+  public void collisionDirection(LocatedRectangle gameObject) {
+	  //System.out.println("collision");
+	  while(!this.vacantSpace(gameObject)) {
+		  //System.out.println("collision");
+		  if(this.rightOf(gameObject, -30)) {
+			  this.position.x+=1;
+			  System.out.println("1");
+		  }
+		  if(this.leftOf(gameObject, -30)) {
+			  this.position.x-=1;
+			  System.out.println("2");
+		  }
+		  if(this.above(gameObject, 0)) {
+			  this.position.y-=1;
+		  }
+		  if(this.below(gameObject, 0)) {
+			  this.position.y+=1;
+		  }
+	  }
+  }
 
   @Override
   public void update(long deltaTime) {
@@ -189,6 +216,7 @@ public class Player implements GameObject, LocatedRectangle {
       this.activeSpriteTimer += deltaTime;
     }
   }
+  
   
   @Override
   public Point getAddress() {

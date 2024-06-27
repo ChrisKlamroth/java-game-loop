@@ -1,6 +1,7 @@
 package game;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
@@ -19,6 +20,7 @@ import javax.swing.JFrame;
 
 import gameobjects.Floor;
 import gameobjects.Manual;
+import gameobjects.TestObject;
 import gameobjects.player.Player;
 import gameobjects.player.PlayerKeymap;
 
@@ -66,6 +68,7 @@ public class Game extends JFrame implements Runnable {
   private final GameLoop gameLoop;
   private final GameKeyListener keyListener;
   private final List<GameObject> gameObjects;
+  private final List<LocatedRectangle> objectsWithHitbox;
 
   public Game() throws IOException {
     super("Game Loop");
@@ -80,9 +83,11 @@ public class Game extends JFrame implements Runnable {
     this.keyListener = new GameKeyListener();
 
     this.gameObjects = new ArrayList<>();
+    this.objectsWithHitbox = new ArrayList<>();
 
     Manual manual = new Manual();
     Floor floor = new Floor();
+    TestObject testObject= new TestObject(new Dimension(100, 100), new Point(300, 500));
     Player player = new Player(
         this.keyListener,
         new PlayerKeymap(
@@ -92,7 +97,8 @@ public class Game extends JFrame implements Runnable {
             KeyEvent.VK_LEFT,
             KeyEvent.VK_SPACE));
 
-    this.gameObjects.addAll(List.of(manual, floor, player));
+    this.gameObjects.addAll(List.of(manual, floor, player, testObject));
+    this.objectsWithHitbox.addAll(List.of(player, testObject));
 
     this.setLocation(getWindowPosition());
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -109,6 +115,14 @@ public class Game extends JFrame implements Runnable {
 
   private void update(long deltaTime) {
     this.gameObjects.forEach(gameObject -> gameObject.update(deltaTime));
+ 
+    if(!objectsWithHitbox.get(1).vacantSpace(objectsWithHitbox.get(0))) {
+    	objectsWithHitbox.get(1).collisionDirection(objectsWithHitbox.get(0));
+    }
+	if(!objectsWithHitbox.get(0).vacantSpace(objectsWithHitbox.get(1))) {
+		objectsWithHitbox.get(0).collisionDirection(objectsWithHitbox.get(1));
+	}
+    
   }
 
   private void draw(Graphics2D graphics2D) {
