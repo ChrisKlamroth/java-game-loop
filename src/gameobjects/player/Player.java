@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
+import java.util.Date;
 
 import javax.imageio.ImageIO;
 
@@ -24,13 +25,16 @@ public class Player implements GameObject, LocatedRectangle {
   private static final double MAX_SPEED = 0.7;
   private static final double MAX_SPEED_Y = 1.8;
   private static final double GRAVITY = 0.0032; //Can not go above 0.004   
+  private static final long INTERACTION_DURATION = 150;
  
   private static final Dimension SPRITE_FRAME_SIZE = new Dimension(50, 37);
   private static final int SPRITE_SCALE = 6;
+  private static final int X_OFFSET = 96;
 
   private final GameKeyListener keyListener;
   private final PlayerKeymap keymap;
   private final Direction direction;
+  private InteractionZone  interaction=null;
 
   private final Sprite idleSprite;
   private final Sprite runSprite;
@@ -47,6 +51,10 @@ public class Player implements GameObject, LocatedRectangle {
   private Vector2D speed2D;
   
   private boolean levitate=false;
+  private boolean isOnGround=true;
+  private int jumpCounter=0;
+  private long elapsedTime = 0L;	
+  private long interactionTime = 0L;
 
   public Player(GameKeyListener keyListener, PlayerKeymap keymap) throws IOException {
     BufferedImage spritesheet = loadSpritesheet();
@@ -113,19 +121,19 @@ public class Player implements GameObject, LocatedRectangle {
     // graphics2D.drawImage(image, x + width, y, -width, height, null)
     // Since the negative scale will move the image to left, its horizontal position
     // has to be compensated.
-//    graphics2D.setColor(Color.green);
-//    graphics2D.drawRect(
-//        (int) this.position.getX(),
-//        (int) this.position.getY(),
-//        (int) this.sprite.getSize().getWidth(),
-//        (int) this.sprite.getSize().getHeight());
-//    
-//    graphics2D.setColor(Color.red);
-//    graphics2D.drawRect(
-//    		getAddress().x,
-//    		getAddress().y,
-//    		getDimension().width,
-//    		getDimension().height);
+    graphics2D.setColor(Color.green);
+    graphics2D.drawRect(
+        (int) this.position.getX(),
+        (int) this.position.getY(),
+        (int) this.sprite.getSize().getWidth(),
+        (int) this.sprite.getSize().getHeight());
+    
+    graphics2D.setColor(Color.red);
+    graphics2D.drawRect(
+    		getAddress().x,
+    		getAddress().y,
+    		getDimension().width,
+    		getDimension().height);
 
     graphics2D.drawImage(
         this.sprite.getFrame(),
@@ -136,7 +144,7 @@ public class Player implements GameObject, LocatedRectangle {
         null);
     
     if(levitate) {
-    	graphics2D.setColor(Color.black);
+    	graphics2D.setColor(new Color(0,0,0,155));
         graphics2D.fillRect(this.getAddress().x,
         					this.getAddress().y+this.getDimension().height,
         					this.getDimension().width,
@@ -162,9 +170,12 @@ public class Player implements GameObject, LocatedRectangle {
 		  if(this.above(gameObject, -30)) {
 			  this.position.y-=1;
 			  this.speed2D.setVectorY(0);
+			  isOnGround=true;
+			  jumpCounter=2;
 		  }
 		  if(this.below(gameObject, -30)) {
 			  this.position.y+=1;
+			  this.speed2D.setVectorY(0);
 		  }
 	  }
   }
@@ -204,12 +215,26 @@ public class Player implements GameObject, LocatedRectangle {
       if (!this.isSpriteLocked) {
         this.sprite = this.attackSprite;
         this.isSpriteLocked = true;
+        if(direction.getX()<0) {
+        	interaction=new InteractionZone(new Dimension(X_OFFSET,this.sprite.getSize().height),
+					position,
+					INTERACTION_DURATION);
+        }
+        else {
+        	interaction=new InteractionZone(new Dimension(X_OFFSET,this.sprite.getSize().height),
+					new Point(position.x+X_OFFSET*2+12,position.y),
+					INTERACTION_DURATION);
+        }
+        
+        
       }
     } else if (keyListener.isKeyPressed(this.keymap.getDown())) {
       if (!this.isSpriteLocked) {
         this.sprite = this.crouchSprite;
         this.speed2D.setVectorY(0);
         levitate();
+        isOnGround=true;
+        jumpCounter=2;
       }
     } else if (keyListener.isKeyPressed(this.keymap.getRight())) {
       if (!this.isSpriteLocked) {
@@ -231,9 +256,18 @@ public class Player implements GameObject, LocatedRectangle {
      this.move(deltaTime, new Direction(0,0));
     }
     
-    if (keyListener.isKeyPressed(this.keymap.getPseudoJump())) {
+    if (keyListener.isKeyPressed(this.keymap.getPseudoJump())&&(jumpCounter==2)) {
     	speed2D.setVectorY(-1.1);
-        }
+    	isOnGround=false;
+    	jumpCounter=1;
+    	elapsedTime = (new Date()).getTime();
+    }
+    else if (keyListener.isKeyPressed(this.keymap.getPseudoJump())&&(jumpCounter==1)&&(new Date()).getTime()-elapsedTime>150) {
+        speed2D.setVectorY(-1.1);
+        isOnGround=false;
+       	jumpCounter=0; 
+       	elapsedTime=0;
+    }   
 
     if (this.isSpriteLocked && this.activeSpriteTimer >= this.sprite.getDuration().toMillis()) {
       this.activeSpriteTimer = 0;
@@ -242,12 +276,25 @@ public class Player implements GameObject, LocatedRectangle {
     if (this.isSpriteLocked) {
       this.activeSpriteTimer += deltaTime;
     }
+    
+    if (!(interaction==null)&&new Date().getTime()-interaction.getTime()>interaction.getTimer()) {
+    	interaction=null;
+    }
+  } 
+  
+  public InteractionZone getInteraction() {
+	  if (!(interaction==null)) {
+		  return interaction;
+	  }
+	  else{
+		  return null;
+	  }
   }
   
   @Override
   public Point getAddress() {
   	// TODO Auto-generated method stub
-  	return new Point(position.x+96, position.y+35);
+  	return new Point(position.x+X_OFFSET, position.y+35);
   }
 
   @Override
@@ -257,15 +304,15 @@ public class Player implements GameObject, LocatedRectangle {
   }
 
   @Override
-  public double getSpeed() {
+  public Vector2D getSpeed() {
   	// TODO Auto-generated method stub
-  	return speed;
+  	return this.speed2D;
   }
 
   @Override
   public Dimension getDimension() {
   	// TODO Auto-generated method stub
-  	return new Dimension(this.sprite.getSize().width -96*2,this.sprite.getSize().height-41);
+  	return new Dimension(this.sprite.getSize().width -X_OFFSET*2,this.sprite.getSize().height-41);
   }
 
   @Override
@@ -280,9 +327,9 @@ public class Player implements GameObject, LocatedRectangle {
   }
 
   @Override
-  public void setSpeed(double speed) {
+  public void setSpeed(Vector2D speed) {
   	// TODO Auto-generated method stub
-  	this.speed=speed;
+  	this.speed2D=speed;
   }
 
   @Override
@@ -376,6 +423,25 @@ public class Player implements GameObject, LocatedRectangle {
     File file=new File(".//resources//player-spritesheet.png");
     return ImageIO.read(file);
   }
+
+@Override
+public long getTime() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+
+@Override
+public long getTimer() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+
+@Override
+public void setTime(long time) {
+	// TODO Auto-generated method stub
+	
+}
+
 }
 
 class Direction {

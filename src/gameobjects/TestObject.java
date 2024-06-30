@@ -8,14 +8,17 @@ import java.awt.Point;
 import game.Game;
 import game.GameObject;
 import game.LocatedRectangle;
+import game.Vector2D;
 
 public class TestObject implements GameObject, LocatedRectangle {
 	  private Dimension size;
 	  private Point position;
+	  private Vector2D speed2D;
 
 	  public TestObject(Dimension size, Point position) {
 	    this.size = size;
 	    this.position=position;
+	    this.speed2D=new Vector2D(0,0);
 	  }
 
 	  public Dimension getSize() {
@@ -28,7 +31,7 @@ public class TestObject implements GameObject, LocatedRectangle {
 
 	  @Override
 	  public void update(long deltaTime) {
-		
+		this.position=new Point(position.x+(int)speed2D.VectorX(), position.y+(int)speed2D.VectorY());
 	  }
 
 	  @Override
@@ -54,9 +57,9 @@ public class TestObject implements GameObject, LocatedRectangle {
 	}
 
 	@Override
-	public double getSpeed() {
+	public Vector2D getSpeed() {
 		// TODO Auto-generated method stub
-		return 0;
+		return speed2D;
 	}
 
 	@Override
@@ -77,11 +80,6 @@ public class TestObject implements GameObject, LocatedRectangle {
 		
 	}
 
-	@Override
-	public void setSpeed(double speed) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void setDimension(Dimension dimension) {
@@ -92,6 +90,7 @@ public class TestObject implements GameObject, LocatedRectangle {
 	public boolean vacantSpace(LocatedRectangle gameObject) {
 		boolean anyIntersection = false ;
 		anyIntersection = anyIntersection || this.intersects (gameObject);
+		//this.speed2D=new Vector2D(0,0); //random find: push outside of sword range;
 		return !anyIntersection;
 	}
   
@@ -113,4 +112,28 @@ public class TestObject implements GameObject, LocatedRectangle {
 		  }
 	  }
   }
+
+@Override
+public long getTime() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+
+@Override
+public long getTimer() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+
+@Override
+public void setTime(long time) {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public void setSpeed(Vector2D speed) {
+	// TODO Auto-generated method stub
+	this.speed2D=speed;
+}
 }

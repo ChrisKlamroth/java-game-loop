@@ -8,6 +8,7 @@ import java.awt.Point;
 import game.Game;
 import game.GameObject;
 import game.LocatedRectangle;
+import game.Vector2D;
 
 public class Floor implements GameObject, LocatedRectangle {
   private final Dimension size;
@@ -58,12 +59,6 @@ public Point getDirection() {
 }
 
 @Override
-public double getSpeed() {
-	// TODO Auto-generated method stub
-	return 0;
-}
-
-@Override
 public Dimension getDimension() {
 	// TODO Auto-generated method stub
 	return size;
@@ -80,11 +75,6 @@ public void setDirection(Point direction) {
 	
 }
 
-@Override
-public void setSpeed(double speed) {
-	// TODO Auto-generated method stub
-	
-}
 
 @Override
 public void setDimension(Dimension dimension) {
@@ -102,5 +92,35 @@ public boolean vacantSpace(LocatedRectangle locatedRectangle) {
 public void collisionDirection(LocatedRectangle locatedRectangle) {
 	// TODO Auto-generated method stub
 	
+}
+
+@Override
+public long getTime() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+
+@Override
+public long getTimer() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+
+@Override
+public void setTime(long time) {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public void setSpeed(Vector2D speed) {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public Vector2D getSpeed() {
+	// TODO Auto-generated method stub
+	return null;
 }
 }

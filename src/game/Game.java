@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -22,12 +23,16 @@ import gameobjects.Floor;
 import gameobjects.Manual;
 import gameobjects.Platform;
 import gameobjects.TestObject;
+import gameobjects.player.InteractionZone;
 import gameobjects.player.Player;
 import gameobjects.player.PlayerKeymap;
 
 public class Game extends JFrame implements Runnable {
   public static final int TARGET_FPS = 60;
   public static final boolean SHOULD_PRINT_FPS = false;
+  
+  private Player player;
+  private InteractionZone interaction;
 
   /**
    * If a second screen is being used (ex. a second monitor), return the bounds
@@ -69,6 +74,7 @@ public class Game extends JFrame implements Runnable {
   private final GameLoop gameLoop;
   private final GameKeyListener keyListener;
   private final List<GameObject> gameObjects;
+  private final List<LocatedRectangle> interactionZones;
   private final List<LocatedRectangle> objectsWithHitbox;
 
   public Game() throws IOException {
@@ -84,6 +90,7 @@ public class Game extends JFrame implements Runnable {
     this.keyListener = new GameKeyListener();
 
     this.gameObjects = new ArrayList<>();
+    this.interactionZones = new ArrayList<>();
     this.objectsWithHitbox = new ArrayList<>();
 
     Manual manual = new Manual();
@@ -110,7 +117,7 @@ public class Game extends JFrame implements Runnable {
 			 (int) Game.getWindowBounds().getWidth()/6,
 			 (int) Game.getWindowBounds().getHeight()/20));
     TestObject testObject= new TestObject(new Dimension(100, 100), new Point(700, 200));
-    Player player = new Player(
+    player = new Player(
         this.keyListener,
         new PlayerKeymap(
             KeyEvent.VK_UP,
@@ -136,7 +143,9 @@ public class Game extends JFrame implements Runnable {
     this.gameLoop.start();
   }
 
-  private void update(long deltaTime) {
+  private void update(long deltaTime) { 
+	interactionManager();
+	  
     this.gameObjects.forEach(gameObject -> gameObject.update(deltaTime));
     
     for(LocatedRectangle part: objectsWithHitbox) {
@@ -150,10 +159,33 @@ public class Game extends JFrame implements Runnable {
         	objectsWithHitbox.get(0).collisionDirection(part);
     	}
     }
+    
+    
   }
 
   private void draw(Graphics2D graphics2D) {
     this.gameObjects.forEach(gameObject -> gameObject.draw(graphics2D));
+  }
+  
+  private void interactionManager() {
+	  if(!(player.getInteraction()==null)&&!(interactionZones.contains(player.getInteraction()))) {
+		  this.gameObjects.add(player.getInteraction());
+		  this.interactionZones.add(player.getInteraction());
+		  //System.out.println(interactionZones.size());
+	  }
+	  for(LocatedRectangle i: interactionZones) {
+		  if(!(objectsWithHitbox.get(1).vacantSpace(i))){
+			  System.out.println("hit");
+			  objectsWithHitbox.get(1).setSpeed(new Vector2D(10,0));
+		  }
+		  
+		  if(!(i==null)&&(new Date().getTime()-i.getTime()>i.getTimer())) {
+			  gameObjects.remove(i);
+			  interactionZones.remove(i);
+//			  System.out.println(interactionZones.size());
+			  break;
+		  }
+	  }
   }
 
   private boolean isRunning() {

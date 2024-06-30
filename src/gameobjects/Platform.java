@@ -8,6 +8,7 @@ import java.awt.Point;
 import game.Game;
 import game.GameObject;
 import game.LocatedRectangle;
+import game.Vector2D;
 
 public class Platform implements GameObject, LocatedRectangle {
 	  private Dimension size;
@@ -54,12 +55,6 @@ public class Platform implements GameObject, LocatedRectangle {
 	}
 
 	@Override
-	public double getSpeed() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
 	public Dimension getDimension() {
 		// TODO Auto-generated method stub
 		return size;
@@ -73,12 +68,6 @@ public class Platform implements GameObject, LocatedRectangle {
 
 	@Override
 	public void setDirection(Point direction) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setSpeed(double speed) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -113,4 +102,34 @@ public class Platform implements GameObject, LocatedRectangle {
 		  }
 	  }
   }
+
+@Override
+public long getTime() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+
+@Override
+public long getTimer() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+
+@Override
+public void setTime(long time) {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public void setSpeed(Vector2D speed) {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public Vector2D getSpeed() {
+	// TODO Auto-generated method stub
+	return null;
+}
 }
