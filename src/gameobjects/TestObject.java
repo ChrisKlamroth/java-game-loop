@@ -14,6 +14,7 @@ public class TestObject implements GameObject, LocatedRectangle {
 	  private Dimension size;
 	  private Point position;
 	  private Vector2D speed2D;
+	  private Point direction;
 
 	  public TestObject(Dimension size, Point position) {
 	    this.size = size;
@@ -31,7 +32,15 @@ public class TestObject implements GameObject, LocatedRectangle {
 
 	  @Override
 	  public void update(long deltaTime) {
+		  if(this.position.x+this.size.width>(int) Game.getWindowBounds().getWidth()) {
+			  this.position.x=1;
+		  }
+		  else if (this.position.x<0) {
+			  this.position.x=(int) Game.getWindowBounds().getWidth()-this.size.width;
+		  }
 		this.position=new Point(position.x+(int)speed2D.VectorX(), position.y+(int)speed2D.VectorY());
+		
+		
 	  }
 
 	  @Override
@@ -53,7 +62,7 @@ public class TestObject implements GameObject, LocatedRectangle {
 	@Override
 	public Point getDirection() {
 		// TODO Auto-generated method stub
-		return null;
+		return direction;
 	}
 
 	@Override
@@ -77,7 +86,7 @@ public class TestObject implements GameObject, LocatedRectangle {
 	@Override
 	public void setDirection(Point direction) {
 		// TODO Auto-generated method stub
-		
+		this.direction=direction;
 	}
 
 
@@ -95,9 +104,10 @@ public class TestObject implements GameObject, LocatedRectangle {
 	}
   
   public void collisionDirection(LocatedRectangle gameObject) {
-	  while(!this.vacantSpace(gameObject)&&
-			(!(this.position.x+this.size.width>(int) Game.getWindowBounds().getWidth()||
-			 !(this.position.x>0)))) {
+//	  while(!this.vacantSpace(gameObject)&&
+//			(!(this.position.x+this.size.width>(int) Game.getWindowBounds().getWidth()||
+//			 !(this.position.x>0)))) {
+	  while(!this.vacantSpace(gameObject)) {
 		  if(this.rightOf(gameObject, -30)) {
 			  this.position.x+=1;
 		  }
@@ -111,6 +121,7 @@ public class TestObject implements GameObject, LocatedRectangle {
 			  this.position.y+=1;
 		  }
 	  }
+	  this.speed2D=new Vector2D(0,0);
   }
 
 @Override

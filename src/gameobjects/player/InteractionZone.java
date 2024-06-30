@@ -82,12 +82,12 @@ public class InteractionZone implements LocatedRectangle, GameObject{
 	@Override
 	public void draw(Graphics2D graphics2d) {
 		// TODO Auto-generated method stub
-		 graphics2d.setColor(Color.red);
-		    graphics2d.fillRect(
-		        (int) this.position.getX(),
-		        (int) this.position.getY(),
-		        (int) this.size.getWidth(),
-		        (int) this.size.getHeight());
+//		 graphics2d.setColor(Color.red);
+//		    graphics2d.fillRect(
+//		        (int) this.position.getX(),
+//		        (int) this.position.getY(),
+//		        (int) this.size.getWidth(),
+//		        (int) this.size.getHeight());
 	}
 
 	@Override

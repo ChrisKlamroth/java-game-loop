@@ -33,6 +33,7 @@ public class Game extends JFrame implements Runnable {
   
   private Player player;
   private InteractionZone interaction;
+  private long timer;
 
   /**
    * If a second screen is being used (ex. a second monitor), return the bounds
@@ -165,6 +166,8 @@ public class Game extends JFrame implements Runnable {
 
   private void draw(Graphics2D graphics2D) {
     this.gameObjects.forEach(gameObject -> gameObject.draw(graphics2D));
+
+//    graphics2D.drawImage();
   }
   
   private void interactionManager() {
@@ -174,10 +177,25 @@ public class Game extends JFrame implements Runnable {
 		  //System.out.println(interactionZones.size());
 	  }
 	  for(LocatedRectangle i: interactionZones) {
+		  
 		  if(!(objectsWithHitbox.get(1).vacantSpace(i))){
-			  System.out.println("hit");
-			  objectsWithHitbox.get(1).setSpeed(new Vector2D(10,0));
+			  if(objectsWithHitbox.get(1).rightOf(i, -97))
+				  objectsWithHitbox.get(1).setDirection(new Point(1,0));
+			  else if(objectsWithHitbox.get(1).leftOf(i, -97))
+	  			  objectsWithHitbox.get(1).setDirection(new Point(-1,0));
+				  
+			  if(objectsWithHitbox.get(1).getDirection().x==1&&new Date().getTime()-timer>200) {
+				  objectsWithHitbox.get(1).setDirection(new Point(1,0));
+				  objectsWithHitbox.get(1).setSpeed(new Vector2D(30,0));
+			  }
+			  else if (new Date().getTime()-timer>200) {
+				  objectsWithHitbox.get(1).setDirection(new Point(-1,0));
+				  objectsWithHitbox.get(1).setSpeed(new Vector2D(-30,0));
+			  }
+			  
+			  saveTime();
 		  }
+		  //testObject interactions
 		  
 		  if(!(i==null)&&(new Date().getTime()-i.getTime()>i.getTimer())) {
 			  gameObjects.remove(i);
@@ -187,7 +205,11 @@ public class Game extends JFrame implements Runnable {
 		  }
 	  }
   }
-
+  
+  private void saveTime() {
+	  this.timer=new Date().getTime();
+  }
+  
   private boolean isRunning() {
     return !this.keyListener.isKeyPressed(KeyEvent.VK_ESCAPE);
   }

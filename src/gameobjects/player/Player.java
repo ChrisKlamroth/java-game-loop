@@ -121,19 +121,19 @@ public class Player implements GameObject, LocatedRectangle {
     // graphics2D.drawImage(image, x + width, y, -width, height, null)
     // Since the negative scale will move the image to left, its horizontal position
     // has to be compensated.
-    graphics2D.setColor(Color.green);
-    graphics2D.drawRect(
-        (int) this.position.getX(),
-        (int) this.position.getY(),
-        (int) this.sprite.getSize().getWidth(),
-        (int) this.sprite.getSize().getHeight());
-    
-    graphics2D.setColor(Color.red);
-    graphics2D.drawRect(
-    		getAddress().x,
-    		getAddress().y,
-    		getDimension().width,
-    		getDimension().height);
+//    graphics2D.setColor(Color.green);
+//    graphics2D.drawRect(
+//        (int) this.position.getX(),
+//        (int) this.position.getY(),
+//        (int) this.sprite.getSize().getWidth(),
+//        (int) this.sprite.getSize().getHeight());
+//    
+//    graphics2D.setColor(Color.red);
+//    graphics2D.drawRect(
+//    		getAddress().x,
+//    		getAddress().y,
+//    		getDimension().width,
+//    		getDimension().height);
 
     graphics2D.drawImage(
         this.sprite.getFrame(),
@@ -218,12 +218,12 @@ public class Player implements GameObject, LocatedRectangle {
         if(direction.getX()<0) {
         	interaction=new InteractionZone(new Dimension(X_OFFSET,this.sprite.getSize().height),
 					position,
-					INTERACTION_DURATION);
+					this.sprite.getDuration().toMillis());
         }
         else {
         	interaction=new InteractionZone(new Dimension(X_OFFSET,this.sprite.getSize().height),
 					new Point(position.x+X_OFFSET*2+12,position.y),
-					INTERACTION_DURATION);
+					this.sprite.getDuration().toMillis());
         }
         
         
@@ -262,7 +262,7 @@ public class Player implements GameObject, LocatedRectangle {
     	jumpCounter=1;
     	elapsedTime = (new Date()).getTime();
     }
-    else if (keyListener.isKeyPressed(this.keymap.getPseudoJump())&&(jumpCounter==1)&&(new Date()).getTime()-elapsedTime>150) {
+    else if (keyListener.isKeyPressed(this.keymap.getPseudoJump())&&(jumpCounter==1)&&(new Date()).getTime()-elapsedTime>175) {
         speed2D.setVectorY(-1.1);
         isOnGround=false;
        	jumpCounter=0; 
