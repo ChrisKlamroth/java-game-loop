@@ -4,6 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import game.Game;
 import game.GameObject;
@@ -13,10 +18,18 @@ import game.Vector2D;
 public class Platform implements GameObject, LocatedRectangle {
 	  private Dimension size;
 	  private Point position;
+	  private Vector2D speed2D;
+	  private Point direction;
+	  private BufferedImage textureRight;
+	  private BufferedImage textureLeft;
+	  private BufferedImage textureMiddle;
 
-	  public Platform(Point position, Dimension size) {
+	  public Platform(Point position, Dimension size) throws IOException {
 	    this.size = size;
 	    this.position=position;
+	    textureLeft=ImageIO.read(new File(".//resources//platform_left.png"));
+	    textureRight=ImageIO.read(new File(".//resources//platform_right.png"));
+	    textureMiddle=ImageIO.read(new File(".//resources//platform_middle.png"));
 	  }
 
 	  public Dimension getSize() {
@@ -34,12 +47,31 @@ public class Platform implements GameObject, LocatedRectangle {
 
 	  @Override
 	  public void draw(Graphics2D graphics2d) {
-	    graphics2d.setColor(Color.black);
-	    graphics2d.fillRect(
+//	    graphics2d.setColor(Color.black);
+//	    graphics2d.fillRect(
+		  graphics2d.drawImage(
+			this.textureLeft,
 	        (int) this.position.getX(),
 	        (int) this.position.getY(),
-	        (int) this.size.getWidth(),
-	        (int) this.size.getHeight());
+	        (int) this.size.getWidth()/4,
+	        (int) this.size.getHeight(),
+	        null);
+		  
+		  graphics2d.drawImage(
+					this.textureMiddle,
+			        (int) this.position.getX()+(int) this.size.getWidth()/4,
+			        (int) this.position.getY(),
+			        (int) this.size.getWidth()/2,
+			        (int) this.size.getHeight(),
+			        null);
+		  
+		  graphics2d.drawImage(
+					this.textureRight,
+			        (int) this.position.getX()+3*(int)this.size.getWidth()/4,
+			        (int) this.position.getY(),
+			        (int) this.size.getWidth()/4,
+			        (int) this.size.getHeight(),
+			        null);
 	  }
 
 	@Override

@@ -4,6 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import game.Game;
 import game.GameObject;
@@ -13,14 +18,19 @@ import game.Vector2D;
 public class Floor implements GameObject, LocatedRectangle {
   private final Dimension size;
   private final Point position;
+  private BufferedImage texture;
+  private BufferedImage textureDirt;
 
-  public Floor() {
+  public Floor() throws IOException {
     this.size = new Dimension(
-        (int) Game.getWindowBounds().getWidth(),
-        250);
+        (int) Game.getWindowBounds().getWidth()+50,
+        225);
     this.position = new Point(
-        0,
+        -25,
         (int) (Game.getWindowBounds().getHeight() - this.size.getHeight()));
+    
+    texture=ImageIO.read(new File(".//resources//dirt_orange.png"));
+    textureDirt=ImageIO.read(new File(".//resources//deep_ground.png"));
   }
 
   public Dimension getSize() {
@@ -38,12 +48,27 @@ public class Floor implements GameObject, LocatedRectangle {
 
   @Override
   public void draw(Graphics2D graphics2d) {
-    graphics2d.setColor(Color.lightGray);
-    graphics2d.fillRect(
-        (int) this.position.getX(),
-        (int) this.position.getY(),
-        (int) this.size.getWidth(),
-        (int) this.size.getHeight());
+
+	  int repetitions=8;
+	  int offset=0;
+	  for(int i=0; i<repetitions;i++) {
+		  if(i==4)
+			 offset=-1; 
+		  graphics2d.drawImage(
+			    	texture,
+			        (int) this.position.getX()+i*(int) this.size.getWidth()/repetitions+offset,
+			        (int) this.position.getY(),
+			        (int) this.size.getWidth()/repetitions,
+			        (int) this.size.getHeight()/2,
+			        null);
+		  graphics2d.drawImage(
+			    	textureDirt,
+			        (int) this.position.getX()+i*(int) this.size.getWidth()/repetitions+offset,
+			        (int) this.position.getY()+(int) this.size.getHeight()/2,
+			        (int) this.size.getWidth()/repetitions,
+			        2*(int) this.size.getHeight()/2,
+			        null);
+	  }
   }
 
 @Override

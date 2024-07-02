@@ -4,6 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import game.Game;
 import game.GameObject;
@@ -15,11 +20,13 @@ public class TestObject implements GameObject, LocatedRectangle {
 	  private Point position;
 	  private Vector2D speed2D;
 	  private Point direction;
-
-	  public TestObject(Dimension size, Point position) {
+	  private BufferedImage texture;
+	  
+	  public TestObject(Dimension size, Point position) throws IOException {
 	    this.size = size;
 	    this.position=position;
 	    this.speed2D=new Vector2D(0,0);
+	    this.texture=ImageIO.read(new File(".//resources//cube.png"));
 	  }
 
 	  public Dimension getSize() {
@@ -32,11 +39,11 @@ public class TestObject implements GameObject, LocatedRectangle {
 
 	  @Override
 	  public void update(long deltaTime) {
-		  if(this.position.x+this.size.width>(int) Game.getWindowBounds().getWidth()) {
-			  this.position.x=1;
+		  if(this.position.x>(int) Game.getWindowBounds().getWidth()) {
+			  this.position.x=-this.size.width;
 		  }
-		  else if (this.position.x<0) {
-			  this.position.x=(int) Game.getWindowBounds().getWidth()-this.size.width;
+		  else if (this.position.x<0-this.size.width) {
+			  this.position.x=(int) Game.getWindowBounds().getWidth();
 		  }
 		this.position=new Point(position.x+(int)speed2D.VectorX(), position.y+(int)speed2D.VectorY());
 		
@@ -45,12 +52,13 @@ public class TestObject implements GameObject, LocatedRectangle {
 
 	  @Override
 	  public void draw(Graphics2D graphics2d) {
-	    graphics2d.setColor(Color.red);
-	    graphics2d.fillRect(
+		  graphics2d.drawImage(
+				  this.texture,
 	        (int) this.position.getX(),
 	        (int) this.position.getY(),
 	        (int) this.size.getWidth(),
-	        (int) this.size.getHeight());
+	        (int) this.size.getHeight(),
+	        null);
 	  }
 
 	@Override

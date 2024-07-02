@@ -17,11 +17,21 @@ public class InteractionZone implements LocatedRectangle, GameObject{
 	private Point direction;
 	private long time;
 	
+	private Vector2D speed2D= new Vector2D(0,0);
+	
 	public InteractionZone(Dimension size, Point position, long duration) {
 		this.intializeTime();
 		this.size=size;
 		this.position=position;
 		this.duration=duration;
+	}
+	
+	public InteractionZone(Dimension size, Point position, long duration, Vector2D speed2D) {
+		this.intializeTime();
+		this.size=size;
+		this.position=position;
+		this.duration=duration;
+		this.speed2D=speed2D;
 	}
 
 	@Override
@@ -76,7 +86,7 @@ public class InteractionZone implements LocatedRectangle, GameObject{
 	@Override
 	public void update(long deltaTime) {
 		// TODO Auto-generated method stub
-		
+		this.position=new Point((int)(position.x+speed2D.VectorX()), (int)(position.y+speed2D.VectorY()));
 	}
 
 	@Override

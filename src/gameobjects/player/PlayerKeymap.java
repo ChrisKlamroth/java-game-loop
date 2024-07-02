@@ -6,7 +6,8 @@ public class PlayerKeymap {
   private final int right;
   private final int left;
   private final int attack;
-  private final int pseudoJump;
+  private final int jump;
+  private final int dash;
 
   public PlayerKeymap(
       int up,
@@ -14,13 +15,15 @@ public class PlayerKeymap {
       int right,
       int left,
       int attack,
-      int pseudoJump) {
+      int jump,
+      int dash) {
     this.up = up;
     this.down = down;
     this.right = right;
     this.left = left;
     this.attack = attack;
-    this.pseudoJump=pseudoJump;
+    this.jump=jump;
+	this.dash = dash;
   }
 
   public int getUp() {
@@ -43,7 +46,10 @@ public class PlayerKeymap {
     return this.attack;
   }
   
-  public int getPseudoJump() {
-	    return this.pseudoJump;
+  public int getJump() {
+	    return this.jump;
+	  }
+  public int getDash() {
+	    return this.dash;
 	  }
 }

@@ -215,15 +215,26 @@ public class Player implements GameObject, LocatedRectangle {
       if (!this.isSpriteLocked) {
         this.sprite = this.attackSprite;
         this.isSpriteLocked = true;
+//        if(direction.getX()<0) {
+//        	interaction=new InteractionZone(new Dimension(X_OFFSET,this.sprite.getSize().height),
+//					position,
+//					INTERACTION_DURATION,
+//					new Vector2D(-30,0));
+//					//this.sprite.getDuration().toMillis());
+//        }
         if(direction.getX()<0) {
-        	interaction=new InteractionZone(new Dimension(X_OFFSET,this.sprite.getSize().height),
-					position,
-					this.sprite.getDuration().toMillis());
+        	interaction=new InteractionZone(new Dimension(X_OFFSET/2,this.sprite.getSize().height),
+					new Point(position.x+X_OFFSET-X_OFFSET/2, position.y),
+					INTERACTION_DURATION+20,
+					new Vector2D(-5,0));
+					//this.sprite.getDuration().toMillis());
         }
         else {
-        	interaction=new InteractionZone(new Dimension(X_OFFSET,this.sprite.getSize().height),
+        	interaction=new InteractionZone(new Dimension(X_OFFSET/2,this.sprite.getSize().height),
 					new Point(position.x+X_OFFSET*2+12,position.y),
-					this.sprite.getDuration().toMillis());
+					INTERACTION_DURATION+20,
+        			new Vector2D(5,0));
+					//this.sprite.getDuration().toMillis());
         }
         
         
@@ -256,13 +267,13 @@ public class Player implements GameObject, LocatedRectangle {
      this.move(deltaTime, new Direction(0,0));
     }
     
-    if (keyListener.isKeyPressed(this.keymap.getPseudoJump())&&(jumpCounter==2)) {
+    if (keyListener.isKeyPressed(this.keymap.getJump())&&(jumpCounter==2)) {
     	speed2D.setVectorY(-1.1);
     	isOnGround=false;
     	jumpCounter=1;
     	elapsedTime = (new Date()).getTime();
     }
-    else if (keyListener.isKeyPressed(this.keymap.getPseudoJump())&&(jumpCounter==1)&&(new Date()).getTime()-elapsedTime>175) {
+    else if (keyListener.isKeyPressed(this.keymap.getJump())&&(jumpCounter==1)&&(new Date()).getTime()-elapsedTime>175) {
         speed2D.setVectorY(-1.1);
         isOnGround=false;
        	jumpCounter=0; 

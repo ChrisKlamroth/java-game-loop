@@ -94,29 +94,34 @@ public class Game extends JFrame implements Runnable {
     this.interactionZones = new ArrayList<>();
     this.objectsWithHitbox = new ArrayList<>();
 
-    Manual manual = new Manual();
     Floor floor = new Floor();
+    Background background= new Background(
+    		new Point(0,0),
+    		new Dimension((int) Game.getWindowBounds().getWidth(),(int) Game.getWindowBounds().getHeight()),
+    		floor.getSize().height);
+    Manual manual = new Manual();
+    
     Platform platform1 = new Platform(
     		new Point(
     		 (int) Game.getWindowBounds().getWidth()/2-(int) Game.getWindowBounds().getWidth()/12,
-    		 (int) Game.getWindowBounds().getHeight()/2),
+    		 (int) Game.getWindowBounds().getHeight()/3+100),
     		new Dimension(
     		 (int) Game.getWindowBounds().getWidth()/6,
-    		(int) Game.getWindowBounds().getHeight()/20));
+    		(int) Game.getWindowBounds().getHeight()/12));
     Platform platform2 = new Platform(
     		new Point(
     		 100,
 			 (int) Game.getWindowBounds().getHeight()/4),
 			new Dimension(
 			 (int) Game.getWindowBounds().getWidth()/6,
-			 (int) Game.getWindowBounds().getHeight()/20));
+			 (int) Game.getWindowBounds().getHeight()/12));
     Platform platform3 = new Platform(
     		new Point(
     		 (int) Game.getWindowBounds().getWidth()-(int) Game.getWindowBounds().getWidth()/6-100,
 			 (int) Game.getWindowBounds().getHeight()/4),
 			new Dimension(
 			 (int) Game.getWindowBounds().getWidth()/6,
-			 (int) Game.getWindowBounds().getHeight()/20));
+			 (int) Game.getWindowBounds().getHeight()/12));
     TestObject testObject= new TestObject(new Dimension(100, 100), new Point(700, 200));
     player = new Player(
         this.keyListener,
@@ -125,10 +130,11 @@ public class Game extends JFrame implements Runnable {
             KeyEvent.VK_DOWN,
             KeyEvent.VK_RIGHT,
             KeyEvent.VK_LEFT,
-            KeyEvent.VK_C,
-            KeyEvent.VK_SPACE));
+            KeyEvent.VK_E,
+            KeyEvent.VK_SPACE,
+            KeyEvent.VK_W));
 
-    this.gameObjects.addAll(List.of(manual, floor, player, testObject, platform1,platform2,platform3));
+    this.gameObjects.addAll(List.of(background, manual, floor, player, testObject, platform1,platform2,platform3));
     this.objectsWithHitbox.addAll(List.of(player, testObject, floor, platform1,platform2,platform3));
 
     this.setLocation(getWindowPosition());
@@ -166,8 +172,6 @@ public class Game extends JFrame implements Runnable {
 
   private void draw(Graphics2D graphics2D) {
     this.gameObjects.forEach(gameObject -> gameObject.draw(graphics2D));
-
-//    graphics2D.drawImage();
   }
   
   private void interactionManager() {
