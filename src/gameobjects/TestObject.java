@@ -125,7 +125,7 @@ public class TestObject implements GameObject, LocatedRectangle {
 		  if(this.above(gameObject, -30)) {
 			  this.position.y-=1;
 		  }
-		  if(this.below(gameObject, -30)) {
+		  if(this.below(gameObject, -35)) {
 			  this.position.y+=1;
 		  }
 	  }
