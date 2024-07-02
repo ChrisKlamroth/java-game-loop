@@ -16,12 +16,11 @@ import javax.imageio.ImageIO;
 import game.Game;
 import game.GameKeyListener;
 import game.GameObject;
-import game.LocatedRectangle;<<<<<<<HEAD
+import game.LocatedRectangle;
 import game.ResourceManager;
 import game.Sprite;
-import game.Spritesheet;=======
-import game.Sprite;
-import game.Vector2D;>>>>>>>38 bdec8e7b2781e818f8ee86178b724a99d517ca
+import game.Spritesheet;
+import game.Vector2D;
 
 public class Player implements GameObject, LocatedRectangle {
   private static final double ACCELERATION = 0.005;
@@ -115,7 +114,7 @@ public class Player implements GameObject, LocatedRectangle {
             - this.sprite.getSize().getHeight()
             + spriteHeightOffset));
     this.speed = 0;
-    this.speed2D=new Vector2D(0,0);
+    this.speed2D = new Vector2D(0, 0);
   }
 
   @Override
@@ -124,19 +123,19 @@ public class Player implements GameObject, LocatedRectangle {
     // graphics2D.drawImage(image, x + width, y, -width, height, null)
     // Since the negative scale will move the image to left, its horizontal position
     // has to be compensated.
-//    graphics2D.setColor(Color.green);
-//    graphics2D.drawRect(
-//        (int) this.position.getX(),
-//        (int) this.position.getY(),
-//        (int) this.sprite.getSize().getWidth(),
-//        (int) this.sprite.getSize().getHeight());
-//    
-//    graphics2D.setColor(Color.red);
-//    graphics2D.drawRect(
-//    		getAddress().x,
-//    		getAddress().y,
-//    		getDimension().width,
-//    		getDimension().height);
+    // graphics2D.setColor(Color.green);
+    // graphics2D.drawRect(
+    // (int) this.position.getX(),
+    // (int) this.position.getY(),
+    // (int) this.sprite.getSize().getWidth(),
+    // (int) this.sprite.getSize().getHeight());
+    //
+    // graphics2D.setColor(Color.red);
+    // graphics2D.drawRect(
+    // getAddress().x,
+    // getAddress().y,
+    // getDimension().width,
+    // getDimension().height);
 
     graphics2D.drawImage(
         this.sprite.getFrame(),
@@ -145,14 +144,14 @@ public class Player implements GameObject, LocatedRectangle {
         (int) (this.sprite.getSize().getWidth() * this.direction.getX()),
         (int) this.sprite.getSize().getHeight(),
         null);
-    
-    if(levitate) {
-    	graphics2D.setColor(new Color(0,0,0,155));
-        graphics2D.fillRect(this.getAddress().x,
-        					this.getAddress().y+this.getDimension().height,
-        					this.getDimension().width,
-        					this.getDimension().height/15);
-        		
+
+    if (levitate) {
+      graphics2D.setColor(new Color(0, 0, 0, 155));
+      graphics2D.fillRect(this.getAddress().x,
+          this.getAddress().y + this.getDimension().height,
+          this.getDimension().width,
+          this.getDimension().height / 15);
+
     }
   }
 
@@ -163,36 +162,36 @@ public class Player implements GameObject, LocatedRectangle {
   }
 
   public void collisionDirection(LocatedRectangle gameObject) {
-	  while(!this.vacantSpace(gameObject)) {
-		  if(this.rightOf(gameObject, -15 )) {
-			  this.position.x+=1;
-		  }
-		  if(this.leftOf(gameObject, -15)) {
-			  this.position.x-=1;
-		  }
-		  if(this.above(gameObject, -30)) {
-			  this.position.y-=1;
-			  this.speed2D.setVectorY(0);
-			  isOnGround=true;
-			  jumpCounter=2;
-		  }
-		  if(this.below(gameObject, -30)) {
-			  this.position.y+=1;
-			  this.speed2D.setVectorY(0);
-		  }
-	  }
+    while (!this.vacantSpace(gameObject)) {
+      if (this.rightOf(gameObject, -15)) {
+        this.position.x += 1;
+      }
+      if (this.leftOf(gameObject, -15)) {
+        this.position.x -= 1;
+      }
+      if (this.above(gameObject, -30)) {
+        this.position.y -= 1;
+        this.speed2D.setVectorY(0);
+        isOnGround = true;
+        jumpCounter = 2;
+      }
+      if (this.below(gameObject, -30)) {
+        this.position.y += 1;
+        this.speed2D.setVectorY(0);
+      }
+    }
   }
-  
+
   public void levitate() {
-	  if(!levitate) {
-		  levitate=true;
-	  }
+    if (!levitate) {
+      levitate = true;
+    }
   }
 
   @Override
   public void update(long deltaTime) {
     this.sprite.update(deltaTime);
-    levitate=false;
+    levitate = false;
 
     // Warp to the other side of the window when player goes out of bounds.
     if (this.position.getX() > Game.getWindowBounds().getSize().getWidth() - 95) {
@@ -218,29 +217,28 @@ public class Player implements GameObject, LocatedRectangle {
       if (!this.isSpriteLocked) {
         this.sprite = this.attackSprite;
         this.isSpriteLocked = true;
-   
 
-        	interaction=new I
-    		 new Point(pos
-      	INTERAC T ION_D
-    		new Vector2D(-5,0));
-					//this.sprite.getDuration().toMillis());
+        if (direction.getX() < 0) {
+          interaction = new InteractionZone(new Dimension(X_OFFSET / 2, this.sprite.getSize().height),
+              new Point(position.x + X_OFFSET - X_OFFSET / 2, position.y),
+              INTERACTION_DURATION + 20,
+              new Vector2D(-5, 0));
+          // this.sprite.getDuration().toMillis());
+        } else {
+          interaction = new InteractionZone(new Dimension(X_OFFSET / 2, this.sprite.getSize().height),
+              new Point(position.x + X_OFFSET * 2 + 12, position.y),
+              INTERACTION_DURATION + 20,
+              new Vector2D(5, 0));
+          // this.sprite.getDuration().toMillis());
         }
-        else {
-        	interaction=new InteractionZone(new Dimension(X_OFFSET/2,this.sprite.getSize().height),
-					new Point(position.x+X_OFFSET*2+12,position.y),
-					INTERACTION_DURATION+20,
-        			new Vector2D(5,0));
-					//this.sprite.getDuration().toMillis());
-        }     
       }
     } else if (keyListener.isKeyPressed(this.keymap.getDown())) {
       if (!this.isSpriteLocked) {
         this.sprite = this.crouchSprite;
         this.speed2D.setVectorY(0);
         levitate();
-        isOnGround=true;
-        jumpCounter=2;
+        isOnGround = true;
+        jumpCounter = 2;
       }
     } else if (keyListener.isKeyPressed(this.keymap.getRight())) {
       if (!this.isSpriteLocked) {
@@ -258,22 +256,22 @@ public class Player implements GameObject, LocatedRectangle {
       if (!this.isSpriteLocked) {
         this.sprite = this.idleSprite;
       }
-     speed2D.setVectorX(0);
-     this.move(deltaTime, new Direction(0,0));
+      speed2D.setVectorX(0);
+      this.move(deltaTime, new Direction(0, 0));
     }
-    
-    if (keyListener.isKeyPressed(this.keymap.getJump())&&(jumpCounter==2)) {
-    	speed2D.setVectorY(-1.25);
-    	isOnGround=false;
-    	jumpCounter=1;
-    	elapsedTime = (new Date()).getTime();
+
+    if (keyListener.isKeyPressed(this.keymap.getJump()) && (jumpCounter == 2)) {
+      speed2D.setVectorY(-1.25);
+      isOnGround = false;
+      jumpCounter = 1;
+      elapsedTime = (new Date()).getTime();
+    } else if (keyListener.isKeyPressed(this.keymap.getJump()) && (jumpCounter == 1)
+        && (new Date()).getTime() - elapsedTime > 200) {
+      speed2D.setVectorY(-1.1);
+      isOnGround = false;
+      jumpCounter = 0;
+      elapsedTime = 0;
     }
-    else if (keyListener.isKeyPressed(this.keymap.getJump())&&(jumpCounter==1)&&(new Date()).getTime()-elapsedTime>200) {
-        speed2D.setVectorY(-1.1);
-        isOnGround=false;
-       	jumpCounter=0; 
-       	elapsedTime=0;
-    }   
 
     if (this.isSpriteLocked && this.activeSpriteTimer >= this.sprite.getDuration().toMillis()) {
       this.activeSpriteTimer = 0;
@@ -282,43 +280,42 @@ public class Player implements GameObject, LocatedRectangle {
     if (this.isSpriteLocked) {
       this.activeSpriteTimer += deltaTime;
     }
-    
-    if (!(interaction==null)&&new Date().getTime()-interaction.getTime()>interaction.getTimer()) {
-    	interaction=null;
+
+    if (!(interaction == null) && new Date().getTime() - interaction.getTime() > interaction.getTimer()) {
+      interaction = null;
     }
-  } 
-  
+  }
+
   public InteractionZone getInteraction() {
-	  if (!(interaction==null)) {
-		  return interaction;
-	  }
-	  else{
-		  return null;
-	  }
+    if (!(interaction == null)) {
+      return interaction;
+    } else {
+      return null;
+    }
   }
 
   @Override
   public Point getAddress() {
-  	// TODO Auto-generated method stub
-  	return new Point(position.x+X_OFFSET, position.y+35);
+    // TODO Auto-generated method stub
+    return new Point(position.x + X_OFFSET, position.y + 35);
   }
 
   @Override
   public Point getDirection() {
-  	// TODO Auto-generated method stub
-  	return new Point(direction.getX(),direction.getY());
+    // TODO Auto-generated method stub
+    return new Point(direction.getX(), direction.getY());
   }
 
   @Override
   public Vector2D getSpeed() {
-  	// TODO Auto-generated method stub
-  	return this.speed2D;
+    // TODO Auto-generated method stub
+    return this.speed2D;
   }
 
   @Override
   public Dimension getDimension() {
-  	// TODO Auto-generated method stub
-  	return new Dimension(this.sprite.getSize().width -X_OFFSET*2,this.sprite.getSize().height-41);
+    // TODO Auto-generated method stub
+    return new Dimension(this.sprite.getSize().width - X_OFFSET * 2, this.sprite.getSize().height - 41);
   }
 
   @Override
@@ -329,12 +326,11 @@ public class Player implements GameObject, LocatedRectangle {
 
   @Override
   public void setDirection(Point direction) {
-  	// TODO Auto-generated method stub	
+    // TODO Auto-generated method stub
   }
 
   @Override
   public void setSpeed(Vector2D speed) {
-  	
 
   }
 
@@ -345,17 +341,17 @@ public class Player implements GameObject, LocatedRectangle {
   }
 
   private void move(long deltaTime) {
-    Vector2D speed2D=this.accelerate2D(deltaTime);
+    Vector2D speed2D = this.accelerate2D(deltaTime);
     Vector2D distance2D = this.calculateDistance2D(speed2D, deltaTime);
     this.position = this.translate2D(this.direction, distance2D);
-    this.speed2D=speed2D;
+    this.speed2D = speed2D;
   }
-  
+
   private void move(long deltaTime, Direction direction) {
-	Vector2D speed2D=this.accelerate2D(deltaTime);
-	Vector2D distance2D = this.calculateDistance2D(speed2D, deltaTime);
-	this.position = this.translate2D(direction, distance2D);
-	this.speed2D.setVectorY(speed2D.VectorY());
+    Vector2D speed2D = this.accelerate2D(deltaTime);
+    Vector2D distance2D = this.calculateDistance2D(speed2D, deltaTime);
+    this.position = this.translate2D(direction, distance2D);
+    this.speed2D.setVectorY(speed2D.VectorY());
   }
 
   /**
@@ -364,33 +360,29 @@ public class Player implements GameObject, LocatedRectangle {
    * 
    * @see https://www.youtube.com/watch?v=JOzoMkOmRrE&t=593s
    */
-  
+
   private Vector2D accelerate2D(long deltaTime) {
-	  Vector2D speed= speed2D;
-	  if ((this.speed2D.VectorX() >= MAX_SPEED)||(this.speed2D.VectorY() >= MAX_SPEED_Y)) {
-		  if ((this.speed2D.VectorX() >= MAX_SPEED)&&(this.speed2D.VectorY() >= MAX_SPEED_Y)) {
-			  speed.setVector2D(MAX_SPEED, MAX_SPEED_Y);
-		  }
-		  else if ((this.speed2D.VectorX() >= MAX_SPEED)) {
-		      speed.setVector2D(MAX_SPEED,this.speed2D.VectorY() + GRAVITY * deltaTime);
-		      //System.out.println("MAX_SPEED + " + speed2D.VectorY());
-		  }
-		  else if ((this.speed2D.VectorY() >= MAX_SPEED_Y)) {
-			  speed.setVector2D(this.speed2D.VectorX() + ACCELERATION * deltaTime, MAX_SPEED_Y);
-			  //System.out.println(speed2D.VectorX() +" + MAX_SPEED_Y");
-		  }
-	  }
-	  else if ((keyListener.isNothingPressed())){
-	    speed.setVector2D(this.speed2D.VectorX(),
-	    		this.speed2D.VectorY() + GRAVITY * deltaTime);
-	    //System.out.println(speed.VectorX()+" + " + speed.VectorY());
-	  }
-	  else {
-		  speed.setVector2D(this.speed2D.VectorX() + ACCELERATION * deltaTime,
-		    		this.speed2D.VectorY() + GRAVITY * deltaTime);
-	  }
-	    return speed;
-	  }
+    Vector2D speed = speed2D;
+    if ((this.speed2D.VectorX() >= MAX_SPEED) || (this.speed2D.VectorY() >= MAX_SPEED_Y)) {
+      if ((this.speed2D.VectorX() >= MAX_SPEED) && (this.speed2D.VectorY() >= MAX_SPEED_Y)) {
+        speed.setVector2D(MAX_SPEED, MAX_SPEED_Y);
+      } else if ((this.speed2D.VectorX() >= MAX_SPEED)) {
+        speed.setVector2D(MAX_SPEED, this.speed2D.VectorY() + GRAVITY * deltaTime);
+        // System.out.println("MAX_SPEED + " + speed2D.VectorY());
+      } else if ((this.speed2D.VectorY() >= MAX_SPEED_Y)) {
+        speed.setVector2D(this.speed2D.VectorX() + ACCELERATION * deltaTime, MAX_SPEED_Y);
+        // System.out.println(speed2D.VectorX() +" + MAX_SPEED_Y");
+      }
+    } else if ((keyListener.isNothingPressed())) {
+      speed.setVector2D(this.speed2D.VectorX(),
+          this.speed2D.VectorY() + GRAVITY * deltaTime);
+      // System.out.println(speed.VectorX()+" + " + speed.VectorY());
+    } else {
+      speed.setVector2D(this.speed2D.VectorX() + ACCELERATION * deltaTime,
+          this.speed2D.VectorY() + GRAVITY * deltaTime);
+    }
+    return speed;
+  }
 
   /**
    * Formula to decelerate speed.
@@ -402,11 +394,11 @@ public class Player implements GameObject, LocatedRectangle {
     }
     return this.speed - ACCELERATION * deltaTime;
   }
-  
+
   private Vector2D decelerate2D(long deltaTime) {
-	    return new Vector2D(0,
-	    		this.speed2D.VectorY() + GRAVITY * deltaTime);
-	  }
+    return new Vector2D(0,
+        this.speed2D.VectorY() + GRAVITY * deltaTime);
+  }
 
   /**
    * Formula to update distance.
@@ -414,60 +406,58 @@ public class Player implements GameObject, LocatedRectangle {
    * 
    * @see https://www.youtube.com/watch?v=JOzoMkOmRrE&t=593s
    */
-  
-  private Vector2D calculateDistance2D(Vector2D speed, long deltaTime) {
-	    return new Vector2D((this.speed2D.VectorX() + speed.VectorX()) * 0.5 * deltaTime,
-	    					(this.speed2D.VectorY() + speed.VectorY()) * 0.5 * deltaTime);
-	  }
-  
-  private Point translate2D(Direction direction, Vector2D distance) {
-	    return new Point(
-	        (int) (this.position.getX() + direction.getX() * distance.VectorX()),
-	        (int) (this.position.getY() + 1 * distance.VectorY()));
-	  }
 
-  private BufferedIm a ge loadSpritesheet() throws IOException {
+  private Vector2D calculateDistance2D(Vector2D speed, long deltaTime) {
+    return new Vector2D((this.speed2D.VectorX() + speed.VectorX()) * 0.5 * deltaTime,
+        (this.speed2D.VectorY() + speed.VectorY()) * 0.5 * deltaTime);
+  }
+
+  private Point translate2D(Direction direction, Vector2D distance) {
+    return new Point(
+        (int) (this.position.getX() + direction.getX() * distance.VectorX()),
+        (int) (this.position.getY() + 1 * distance.VectorY()));
+  }
+
+  private BufferedImage loadSpritesheet() throws IOException {
     // String imagePathname =
     // String.format("%1$sresources%1$splayer-spritesheet.png", File.separator);
     // URL image U rl = getClass().getResource(imagePathname);
-   
+    File file = new File(".//resources//player-spritesheet.png");
 
     return ImageIO.read(file);
-     }  
-    
-    Override
-    ublic long getTime() {
-	// TODO Auto-generated method stub
-	return 0;
+  }
+
+  @Override
+  public long getTime() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public long getTimer() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public void setTime(long time) {
+    // TODO Auto-generated method stub
+  }
 }
 
-@Override
-public long getTimer() {
-	// TODO Auto-generated method stub
-	retu
+class Direction {
+  private int x;
+  private int y;
 
-  
-    erride 
-    lic void setTime(long time) {  
-      TODO Auto-generated method stub  
-        
-       
-         
-         
-      s ivate int x;
-        vate int y;
-         
-      b
-       
-      
-          c Direction(int x, int y) {
-      hi s.x = x;
-      
-      
-           Direction() {
-     
-    
-  
+  public static Direction right() {
+    return new Direction(1, 0);
+  }
+
+  public Direction(int x, int y) {
+    this.x = x;
+    this.y = y;
+  }
+
   public int getX() {
     return this.x;
   }
@@ -481,9 +471,9 @@ public long getTimer() {
   }
 
   public void setLeft() {
-    his.x = -1;
-        
-  
+    this.x = -1;
+  }
+
   public void setUp() {
     this.y = -1;
   }
@@ -493,15 +483,15 @@ public long getTimer() {
   }
 
   public void reset() {
-    his.resetX();
-        esetY();
-  
+    this.resetX();
+    this.resetY();
+  }
 
   public void resetX() {
-    his.x = 0;
-        
-        
-  ublic void resetY() {
+    this.x = 0;
+  }
+
+  public void resetY() {
     this.y = 0;
   }
 
@@ -509,26 +499,3 @@ public long getTimer() {
     return this.x == -1;
   }
 }
-
-
-  
-
-  
-  
-    
-    
-  
-
-  
-  
-    
-    
-  
-
-  
-  
-    
-
-  
-
-   
