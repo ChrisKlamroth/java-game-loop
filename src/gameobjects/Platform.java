@@ -14,19 +14,25 @@ import game.Game;
 import game.GameObject;
 import game.LocatedRectangle;
 import game.Vector2D;
+import gameobjects.player.Player;
 
-public class TestObject implements GameObject, LocatedRectangle {
+public class Platform implements GameObject, LocatedRectangle {
 	  private Dimension size;
 	  private Point position;
 	  private Vector2D speed2D;
 	  private Point direction;
-	  private BufferedImage texture;
-	  
-	  public TestObject(Dimension size, Point position) throws IOException {
+	  private BufferedImage textureRight;
+	  private BufferedImage textureLeft;
+	  private BufferedImage textureMiddle;
+	  private Player player;
+
+	  public Platform(Point position, Dimension size, Player player) throws IOException {
 	    this.size = size;
 	    this.position=position;
-	    this.speed2D=new Vector2D(0,0);
-	    this.texture=ImageIO.read(new File(".//resources//cube.png"));
+	    this.player=player;
+	    textureLeft=ImageIO.read(new File(".//resources//platform_left.png"));
+	    textureRight=ImageIO.read(new File(".//resources//platform_right.png"));
+	    textureMiddle=ImageIO.read(new File(".//resources//platform_middle.png"));
 	  }
 
 	  public Dimension getSize() {
@@ -39,26 +45,36 @@ public class TestObject implements GameObject, LocatedRectangle {
 
 	  @Override
 	  public void update(long deltaTime) {
-		  if(this.position.x>(int) Game.getWindowBounds().getWidth()) {
-			  this.position.x=-this.size.width;
-		  }
-		  else if (this.position.x<0-this.size.width) {
-			  this.position.x=(int) Game.getWindowBounds().getWidth();
-		  }
-		this.position=new Point(position.x+(int)speed2D.VectorX(), position.y+(int)speed2D.VectorY());
-		
-		
+//		this.position=new Point(position.x+(int)(player.getDirection().getX()*player.getSpeed().VectorX()*deltaTime), position.y);
 	  }
 
 	  @Override
 	  public void draw(Graphics2D graphics2d) {
+//	    graphics2d.setColor(Color.black);
+//	    graphics2d.fillRect(
 		  graphics2d.drawImage(
-				  this.texture,
+			this.textureLeft,
 	        (int) this.position.getX(),
 	        (int) this.position.getY(),
-	        (int) this.size.getWidth(),
+	        (int) this.size.getWidth()/4,
 	        (int) this.size.getHeight(),
 	        null);
+		  
+		  graphics2d.drawImage(
+					this.textureMiddle,
+			        (int) this.position.getX()+(int) this.size.getWidth()/4,
+			        (int) this.position.getY(),
+			        (int) this.size.getWidth()/2,
+			        (int) this.size.getHeight(),
+			        null);
+		  
+		  graphics2d.drawImage(
+					this.textureRight,
+			        (int) this.position.getX()+3*(int)this.size.getWidth()/4,
+			        (int) this.position.getY(),
+			        (int) this.size.getWidth()/4,
+			        (int) this.size.getHeight(),
+			        null);
 	  }
 
 	@Override
@@ -70,13 +86,7 @@ public class TestObject implements GameObject, LocatedRectangle {
 	@Override
 	public Point getDirection() {
 		// TODO Auto-generated method stub
-		return direction;
-	}
-
-	@Override
-	public Vector2D getSpeed() {
-		// TODO Auto-generated method stub
-		return speed2D;
+		return null;
 	}
 
 	@Override
@@ -94,9 +104,8 @@ public class TestObject implements GameObject, LocatedRectangle {
 	@Override
 	public void setDirection(Point direction) {
 		// TODO Auto-generated method stub
-		this.direction=direction;
+		
 	}
-
 
 	@Override
 	public void setDimension(Dimension dimension) {
@@ -107,15 +116,13 @@ public class TestObject implements GameObject, LocatedRectangle {
 	public boolean vacantSpace(LocatedRectangle gameObject) {
 		boolean anyIntersection = false ;
 		anyIntersection = anyIntersection || this.intersects (gameObject);
-		//this.speed2D=new Vector2D(0,0); //random find: push outside of sword range;
 		return !anyIntersection;
 	}
   
   public void collisionDirection(LocatedRectangle gameObject) {
-//	  while(!this.vacantSpace(gameObject)&&
-//			(!(this.position.x+this.size.width>(int) Game.getWindowBounds().getWidth()||
-//			 !(this.position.x>0)))) {
-	  while(!this.vacantSpace(gameObject)) {
+	  while(!this.vacantSpace(gameObject)&&
+			(!(this.position.x+this.size.width>(int) Game.getWindowBounds().getWidth()||
+			 !(this.position.x>0)))) {
 		  if(this.rightOf(gameObject, -30)) {
 			  this.position.x+=1;
 		  }
@@ -125,11 +132,10 @@ public class TestObject implements GameObject, LocatedRectangle {
 		  if(this.above(gameObject, -30)) {
 			  this.position.y-=1;
 		  }
-		  if(this.below(gameObject, -35)) {
+		  if(this.below(gameObject, -30)) {
 			  this.position.y+=1;
 		  }
 	  }
-	  this.speed2D=new Vector2D(0,0);
   }
 
 @Override
@@ -153,6 +159,12 @@ public void setTime(long time) {
 @Override
 public void setSpeed(Vector2D speed) {
 	// TODO Auto-generated method stub
-	this.speed2D=speed;
+	
+}
+
+@Override
+public Vector2D getSpeed() {
+	// TODO Auto-generated method stub
+	return null;
 }
 }

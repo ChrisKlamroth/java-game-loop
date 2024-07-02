@@ -3,20 +3,27 @@ package game;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.Date;
 
 public interface LocatedRectangle {
 	public Point getAddress();
 	public Point getDirection();
-	public double getSpeed();
+	public Vector2D getSpeed();
 	public Dimension getDimension();
+	public long getTime();
+	public long getTimer();
 	public void setAddress(Point location);
 	public void setDirection(Point direction);
-	public void setSpeed(double speed);
+	public void setSpeed(Vector2D speed);
 	public void setDimension(Dimension dimension);
+	public void setTime(long time);
 	
 	public boolean vacantSpace(LocatedRectangle locatedRectangle);
 	public void collisionDirection(LocatedRectangle locatedRectangle);
-
+	
+	public default void intializeTime() {
+		this.setTime(new Date().getTime());
+	}
 	public default boolean intersects(LocatedRectangle other) {
 		return !doesNotIntersect(other, 0);
 	}	
