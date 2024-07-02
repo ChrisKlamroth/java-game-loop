@@ -14,6 +14,7 @@ import game.Game;
 import game.GameObject;
 import game.LocatedRectangle;
 import game.Vector2D;
+import gameobjects.player.Player;
 
 public class Platform implements GameObject, LocatedRectangle {
 	  private Dimension size;
@@ -23,10 +24,12 @@ public class Platform implements GameObject, LocatedRectangle {
 	  private BufferedImage textureRight;
 	  private BufferedImage textureLeft;
 	  private BufferedImage textureMiddle;
+	  private Player player;
 
-	  public Platform(Point position, Dimension size) throws IOException {
+	  public Platform(Point position, Dimension size, Player player) throws IOException {
 	    this.size = size;
 	    this.position=position;
+	    this.player=player;
 	    textureLeft=ImageIO.read(new File(".//resources//platform_left.png"));
 	    textureRight=ImageIO.read(new File(".//resources//platform_right.png"));
 	    textureMiddle=ImageIO.read(new File(".//resources//platform_middle.png"));
@@ -42,7 +45,7 @@ public class Platform implements GameObject, LocatedRectangle {
 
 	  @Override
 	  public void update(long deltaTime) {
-		
+//		this.position=new Point(position.x+(int)(player.getDirection().getX()*player.getSpeed().VectorX()*deltaTime), position.y);
 	  }
 
 	  @Override

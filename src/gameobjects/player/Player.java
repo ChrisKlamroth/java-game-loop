@@ -303,7 +303,7 @@ public class Player implements GameObject, LocatedRectangle {
   @Override
   public Point getDirection() {
   	// TODO Auto-generated method stub
-  	return null;
+  	return new Point(direction.getX(),direction.getY());
   }
 
   @Override
@@ -377,10 +377,14 @@ public class Player implements GameObject, LocatedRectangle {
 			  //System.out.println(speed2D.VectorX() +" + MAX_SPEED_Y");
 		  }
 	  }
-	  else {
-	    speed.setVector2D(this.speed2D.VectorX() + ACCELERATION * deltaTime,
+	  else if ((keyListener.isNothingPressed())){
+	    speed.setVector2D(this.speed2D.VectorX(),
 	    		this.speed2D.VectorY() + GRAVITY * deltaTime);
 	    //System.out.println(speed.VectorX()+" + " + speed.VectorY());
+	  }
+	  else {
+		  speed.setVector2D(this.speed2D.VectorX() + ACCELERATION * deltaTime,
+		    		this.speed2D.VectorY() + GRAVITY * deltaTime);
 	  }
 	    return speed;
 	  }

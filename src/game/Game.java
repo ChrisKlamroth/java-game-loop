@@ -94,11 +94,22 @@ public class Game extends JFrame implements Runnable {
     this.interactionZones = new ArrayList<>();
     this.objectsWithHitbox = new ArrayList<>();
 
+    player = new Player(
+            this.keyListener,
+            new PlayerKeymap(
+                KeyEvent.VK_UP,
+                KeyEvent.VK_DOWN,
+                KeyEvent.VK_RIGHT,
+                KeyEvent.VK_LEFT,
+                KeyEvent.VK_E,
+                KeyEvent.VK_SPACE,
+                KeyEvent.VK_W));
     Floor floor = new Floor();
     Background background= new Background(
     		new Point(0,0),
     		new Dimension((int) Game.getWindowBounds().getWidth(),(int) Game.getWindowBounds().getHeight()),
-    		floor.getSize().height);
+    		floor.getSize().height,
+    		player);
     Manual manual = new Manual();
     
     Platform platform1 = new Platform(
@@ -107,32 +118,26 @@ public class Game extends JFrame implements Runnable {
     		 (int) Game.getWindowBounds().getHeight()/3+100),
     		new Dimension(
     		 (int) Game.getWindowBounds().getWidth()/6,
-    		(int) Game.getWindowBounds().getHeight()/12));
+    		(int) Game.getWindowBounds().getHeight()/12),
+			 player);
     Platform platform2 = new Platform(
     		new Point(
     		 100,
 			 (int) Game.getWindowBounds().getHeight()/4),
 			new Dimension(
 			 (int) Game.getWindowBounds().getWidth()/6,
-			 (int) Game.getWindowBounds().getHeight()/12));
+			 (int) Game.getWindowBounds().getHeight()/12),
+			 player);
     Platform platform3 = new Platform(
     		new Point(
     		 (int) Game.getWindowBounds().getWidth()-(int) Game.getWindowBounds().getWidth()/6-100,
 			 (int) Game.getWindowBounds().getHeight()/4),
 			new Dimension(
 			 (int) Game.getWindowBounds().getWidth()/6,
-			 (int) Game.getWindowBounds().getHeight()/12));
-    TestObject testObject= new TestObject(new Dimension(100, 100), new Point(700, 200));
-    player = new Player(
-        this.keyListener,
-        new PlayerKeymap(
-            KeyEvent.VK_UP,
-            KeyEvent.VK_DOWN,
-            KeyEvent.VK_RIGHT,
-            KeyEvent.VK_LEFT,
-            KeyEvent.VK_E,
-            KeyEvent.VK_SPACE,
-            KeyEvent.VK_W));
+			 (int) Game.getWindowBounds().getHeight()/12),
+			 player);
+    TestObject testObject= new TestObject(new Dimension(100, 100), new Point(1100, 350));
+    
 
     this.gameObjects.addAll(List.of(background, manual, floor, player, testObject, platform1,platform2,platform3));
     this.objectsWithHitbox.addAll(List.of(player, testObject, floor, platform1,platform2,platform3));

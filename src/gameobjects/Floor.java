@@ -52,20 +52,18 @@ public class Floor implements GameObject, LocatedRectangle {
 	  int repetitions=8;
 	  int offset=0;
 	  for(int i=0; i<repetitions;i++) {
-		  if(i==4)
-			 offset=-1; 
 		  graphics2d.drawImage(
 			    	texture,
 			        (int) this.position.getX()+i*(int) this.size.getWidth()/repetitions+offset,
 			        (int) this.position.getY(),
-			        (int) this.size.getWidth()/repetitions,
+			        (int) this.size.getWidth()/repetitions+1,
 			        (int) this.size.getHeight()/2,
 			        null);
 		  graphics2d.drawImage(
 			    	textureDirt,
 			        (int) this.position.getX()+i*(int) this.size.getWidth()/repetitions+offset,
 			        (int) this.position.getY()+(int) this.size.getHeight()/2,
-			        (int) this.size.getWidth()/repetitions,
+			        (int) this.size.getWidth()/repetitions+1,
 			        2*(int) this.size.getHeight()/2,
 			        null);
 	  }
